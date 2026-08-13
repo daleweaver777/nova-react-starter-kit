@@ -9,4 +9,5 @@ Before planning or editing, find the row whose globs match the file's path and r
 | pnpm-workspace.yaml | .ai/rules/general.md |
 | resources/js/hooks/** | .ai/rules/hooks.md |
 | resources/js/**/*.tsx | .ai/rules/js.md |
+| tests/** | .ai/rules/tests.md |
 | resources/js/components/ui/*.tsx | .ai/rules/ui.md |
