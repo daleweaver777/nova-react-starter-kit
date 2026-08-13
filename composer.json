@@ -70,8 +70,7 @@
             "phpstan analyse --memory-limit=512M"
         ],
         "nova:tools": [
-            "npx skills add shadcn/ui",
-            "npx react-doctor@latest"
+            "npx skills add shadcn/ui"
         ],
         "test": [
             "@php artisan config:clear --ansi",

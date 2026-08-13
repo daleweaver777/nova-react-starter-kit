@@ -1,27 +1,72 @@
-# Laravel + React Starter Kit
+# Shadcn UI Nova — React Starter Kit
 
-## Introduction
+A fork of [`laravel/react-starter-kit`](https://github.com/laravel/react-starter-kit) carrying the Nova theme: the shadcn `base-nova` style on [Base UI](https://base-ui.com) (not Radix), an Inter type stack, and a compact/standard density setting.
 
-Our React starter kit provides a robust, modern starting point for building Laravel applications with a React frontend using [Inertia](https://inertiajs.com).
+It keeps the upstream kit's install-time scaffolding intact, so the auth-feature prompt still works exactly as it does for the official kit.
 
-Inertia allows you to build modern, single-page React applications using classic server-side routing and controllers. This lets you enjoy the frontend power of React combined with the incredible backend productivity of Laravel and lightning-fast Vite compilation.
+## Installing
 
-This React starter kit utilizes React 19, TypeScript, Tailwind, and the [shadcn/ui](https://ui.shadcn.com) and [radix-ui](https://www.radix-ui.com) component libraries.
+```sh
+laravel new my-app --using=https://github.com/dalew/nova-react-starter-kit --pest
+```
 
-## Official Documentation
+The installer asks which authentication features to keep and trims the rest — files, config, routes, tests, npm packages and all. Pin a release by appending a ref:
 
-Documentation for all Laravel starter kits can be found on the [Laravel website](https://laravel.com/docs/starter-kits).
+```sh
+laravel new my-app --using=https://github.com/dalew/nova-react-starter-kit#v1.0.0 --pest
+```
 
-## Contributing
+### Unattended installs
 
-Thank you for considering contributing to our starter kit! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+`NOVA_AUTH_FEATURES` answers the prompt ahead of time. Pass a comma-separated list, or `none` for a login-only app:
 
-All contributions to the Starter Kits from now on should be made through [Maestro](https://github.com/laravel/maestro).
+```sh
+NOVA_AUTH_FEATURES=registration laravel new my-app \
+  --using=https://github.com/dalew/nova-react-starter-kit --pest
+```
 
-## Code of Conduct
+Valid values: `email-verification`, `registration`, `2fa`, `passkeys`, `password-confirmation`. An unrecognised value fails the install rather than silently dropping the feature.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## After installing
+
+```sh
+cd my-app
+composer nova:tools   # installs the shadcn + migrate-radix-to-base agent skills
+```
+
+`composer nova:tools` prompts for which agent to install the skills for, so run it yourself rather than in CI.
+
+Run the React Doctor lint sweep whenever you want it — it is deliberately not wired to a hook, and not a dependency:
+
+```sh
+pnpm doctor
+```
+
+## What this repo ships
+
+Only two things that are not stock upstream or generated: `.ai/rules/` and `doctor.config.jsonc`. Everything else an app needs — `CLAUDE.md`, `AGENTS.md`, `.mcp.json`, `boost.json`, `.claude/skills/` — is produced by `laravel new --boost`, so it stays current rather than pinned to whatever this fork last committed.
+
+## Working on this kit
+
+Like the upstream kit, no lockfiles are committed: every install resolves fresh.
+
+That has one sharp edge for contributors. With no `composer.lock`, `composer install` behaves like `composer update`, which fires `post-update-cmd` — and that runs `install:features`, which chisels the repo and deletes its own scaffolding. Set the guard the installer sets:
+
+```sh
+LARAVEL_INSTALLER_DEFER_HOOKS=1 composer install
+```
+
+### Rebasing on upstream
+
+```sh
+git remote add upstream https://github.com/laravel/react-starter-kit.git
+git fetch upstream && git merge upstream/main
+```
+
+The delta is concentrated in `resources/js` and `resources/css`. Because the UI components are ported from Radix to Base UI, any upstream change under `resources/js/components/ui/` lands as a conflict to resolve by hand.
+
+Keep the `@chisel-*` markers balanced when editing marked files — `laravel/chisel` throws on two consecutive opening or closing markers for the same tag, and an unbalanced pair silently produces invalid output for whoever disables that feature.
 
 ## License
 
-The Laravel + React starter kit is open-sourced software licensed under the MIT license.
+MIT, as with the upstream starter kit.
