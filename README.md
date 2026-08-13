@@ -7,13 +7,13 @@ It keeps the upstream kit's install-time scaffolding intact, so the auth-feature
 ## Installing
 
 ```sh
-laravel new my-app --using=https://github.com/dalew/nova-react-starter-kit --pest
+laravel new my-app --using=https://github.com/daleweaver777/nova-react-starter-kit --pest
 ```
 
 The installer asks which authentication features to keep and trims the rest — files, config, routes, tests, npm packages and all. Pin a release by appending a ref:
 
 ```sh
-laravel new my-app --using=https://github.com/dalew/nova-react-starter-kit#v1.0.0 --pest
+laravel new my-app --using=https://github.com/daleweaver777/nova-react-starter-kit#v1.0.0 --pest
 ```
 
 ### Unattended installs
@@ -22,7 +22,7 @@ laravel new my-app --using=https://github.com/dalew/nova-react-starter-kit#v1.0.
 
 ```sh
 NOVA_AUTH_FEATURES=registration laravel new my-app \
-  --using=https://github.com/dalew/nova-react-starter-kit --pest
+  --using=https://github.com/daleweaver777/nova-react-starter-kit --pest
 ```
 
 Valid values: `email-verification`, `registration`, `2fa`, `passkeys`, `password-confirmation`. An unrecognised value fails the install rather than silently dropping the feature.
