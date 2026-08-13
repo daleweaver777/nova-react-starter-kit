@@ -1,19 +1,33 @@
 import { Form, Head, usePage } from '@inertiajs/react';
-/* @chisel-email-verification */
-import { Link } from '@inertiajs/react';
-/* @end-chisel-email-verification */
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/delete-user';
-import Heading from '@/components/heading';
-import InputError from '@/components/input-error';
+/* @chisel-email-verification */
+import TextLink from '@/components/text-link';
+/* @end-chisel-email-verification */
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Field,
+    /* @chisel-email-verification */
+    FieldDescription,
+    /* @end-chisel-email-verification */
+    FieldError,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { edit } from '@/routes/profile';
-import type { Auth } from '@/types';
 /* @chisel-email-verification */
 import { send } from '@/routes/verification';
 /* @end-chisel-email-verification */
+import type { Auth } from '@/types';
 
 type PageProps = {
     auth: Auth;
@@ -36,102 +50,118 @@ export default function Profile(
         <>
             <Head title="Profile settings" />
 
-            <h1 className="sr-only">Profile settings</h1>
-
-            <div className="space-y-6">
-                <Heading
-                    variant="small"
-                    title="Profile"
-                    description="Update your name and email address"
-                />
+            <Card>
+                <CardHeader>
+                    <CardTitle>Profile</CardTitle>
+                    <CardDescription>
+                        Update your name and email address
+                    </CardDescription>
+                </CardHeader>
 
                 <Form
                     {...ProfileController.update.form()}
                     options={{
                         preserveScroll: true,
                     }}
-                    className="space-y-6"
+                    className="flex flex-col gap-(--card-spacing)"
                 >
                     {({ processing, errors }) => (
                         <>
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                            <CardContent>
+                                <FieldGroup>
+                                    <Field data-invalid={!!errors.name}>
+                                        <FieldLabel htmlFor="name">
+                                            Name
+                                        </FieldLabel>
 
-                                <Input
-                                    id="name"
-                                    className="mt-1 block w-full"
-                                    defaultValue={auth.user.name}
-                                    name="name"
-                                    required
-                                    autoComplete="name"
-                                    placeholder="Full name"
-                                />
+                                        <Input
+                                            id="name"
+                                            defaultValue={auth.user.name}
+                                            name="name"
+                                            required
+                                            autoComplete="name"
+                                            placeholder="Full name"
+                                            aria-invalid={!!errors.name}
+                                            aria-describedby={
+                                                errors.name
+                                                    ? 'name-error'
+                                                    : undefined
+                                            }
+                                        />
 
-                                <InputError
-                                    className="mt-2"
-                                    message={errors.name}
-                                />
-                            </div>
+                                        <FieldError id="name-error">
+                                            {errors.name}
+                                        </FieldError>
+                                    </Field>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                    <Field data-invalid={!!errors.email}>
+                                        <FieldLabel htmlFor="email">
+                                            Email address
+                                        </FieldLabel>
 
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    className="mt-1 block w-full"
-                                    defaultValue={auth.user.email}
-                                    name="email"
-                                    required
-                                    autoComplete="username"
-                                    placeholder="Email address"
-                                />
+                                        <Input
+                                            id="email"
+                                            type="email"
+                                            defaultValue={auth.user.email}
+                                            name="email"
+                                            required
+                                            autoComplete="username"
+                                            placeholder="Email address"
+                                            aria-invalid={!!errors.email}
+                                            aria-describedby={
+                                                errors.email
+                                                    ? 'email-error'
+                                                    : undefined
+                                            }
+                                        />
 
-                                <InputError
-                                    className="mt-2"
-                                    message={errors.email}
-                                />
-                            </div>
+                                        <FieldError id="email-error">
+                                            {errors.email}
+                                        </FieldError>
 
-                            {/* @chisel-email-verification */}
-                            {mustVerifyEmail &&
-                                auth.user.email_verified_at === null && (
-                                    <div>
-                                        <p className="-mt-4 text-sm text-muted-foreground">
-                                            Your email address is unverified.{' '}
-                                            <Link
-                                                href={send()}
-                                                as="button"
-                                                className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
-                                            >
-                                                Click here to re-send the
-                                                verification email.
-                                            </Link>
-                                        </p>
+                                        {/* @chisel-email-verification */}
+                                        {mustVerifyEmail &&
+                                            auth.user.email_verified_at ===
+                                                null && (
+                                                <FieldDescription>
+                                                    Your email address is
+                                                    unverified.{' '}
+                                                    <TextLink
+                                                        href={send()}
+                                                        as="button"
+                                                    >
+                                                        Click here to re-send
+                                                        the verification email.
+                                                    </TextLink>
+                                                    {status ===
+                                                        'verification-link-sent' && (
+                                                        <span className="mt-2 block font-medium text-green-600 dark:text-green-400">
+                                                            A new verification
+                                                            link has been sent
+                                                            to your email
+                                                            address.
+                                                        </span>
+                                                    )}
+                                        {/* @end-chisel-email-verification */}
+                                                </FieldDescription>
+                                            )}
+                                    </Field>
+                                </FieldGroup>
+                            </CardContent>
 
-                                        {status ===
-                                            'verification-link-sent' && (
-                                            <div className="mt-2 text-sm font-medium text-green-600">
-                                                A new verification link has been
-                                                sent to your email address.
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            {/* @end-chisel-email-verification */}
-
-                            <div className="flex items-center gap-4">
+                            <CardFooter className="justify-end">
                                 <Button
+                                    type="submit"
                                     disabled={processing}
                                     data-test="update-profile-button"
                                 >
                                     Save
                                 </Button>
-                            </div>
+                            </CardFooter>
                         </>
                     )}
                 </Form>
-            </div>
+            </Card>
 
             <DeleteUser />
         </>

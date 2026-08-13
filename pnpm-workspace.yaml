@@ -3,3 +3,30 @@ packages:
 
 publicHoistPattern:
   - '@inertiajs/core'
+
+# Supply-chain hardening. Quarantine freshly published versions so a
+# compromised release has time to be reported and unpublished, and refuse a
+# package whose provenance/signature trust weakens between resolutions.
+#
+# Unlike a generated app, this kit ships no lockfile -- every install resolves
+# fresh -- so the cutoff applies to whatever is current on the day someone runs
+# `laravel new`. 1440 (24h) is the floor that keeps that reliable: a longer
+# window rejects any dependency that published a patch in the meantime, and a
+# rejected resolution blocks `pnpm install` and every `pnpm run` script, which
+# would break installs for a reason the person installing cannot act on.
+#
+# Raise it in the generated app, not here: once that app commits a lockfile the
+# resolution is pinned, and 10080 (7 days) costs nothing.
+minimumReleaseAge: 1440
+trustPolicy: no-downgrade
+blockExoticSubdeps: true
+
+# Two legacy transitive dependencies predate npm provenance attestation, so
+# `no-downgrade` reads them as a trust downgrade against their attested
+# siblings (semver 7.x, undici 7.x). Neither is a takeover: both are
+# pre-existing and pulled in transitively -- semver@6 by @babel/core,
+# undici-types@6 by @types/node. Drop each entry when its parent stops
+# resolving the pre-provenance major.
+trustPolicyExclude:
+  - semver
+  - undici-types

@@ -1,12 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
 import { useRef } from 'react';
 import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
-import Heading from '@/components/heading';
-import InputError from '@/components/input-error';
-import PasswordInput from '@/components/password-input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { edit } from '@/routes/security';
 /* @chisel-passkeys */
 import type { Props as ManagePasskeysProps } from '@/components/manage-passkeys';
 import ManagePasskeys from '@/components/manage-passkeys';
@@ -15,6 +9,23 @@ import ManagePasskeys from '@/components/manage-passkeys';
 import type { Props as ManageTwoFactorProps } from '@/components/manage-two-factor';
 import ManageTwoFactor from '@/components/manage-two-factor';
 /* @end-chisel-2fa */
+import PasswordInput from '@/components/password-input';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Field,
+    FieldError,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
+import { edit } from '@/routes/security';
 
 type Props = {
     passwordRules: string;
@@ -29,14 +40,14 @@ export default function Security(props: Props) {
         <>
             <Head title="Security settings" />
 
-            <h1 className="sr-only">Security settings</h1>
-
-            <div className="space-y-6">
-                <Heading
-                    variant="small"
-                    title="Update password"
-                    description="Ensure your account is using a long, random password to stay secure"
-                />
+            <Card>
+                <CardHeader>
+                    <CardTitle>Update password</CardTitle>
+                    <CardDescription>
+                        Ensure your account is using a long, random password to
+                        stay secure
+                    </CardDescription>
+                </CardHeader>
 
                 <Form
                     {...SecurityController.update.form()}
@@ -58,74 +69,110 @@ export default function Security(props: Props) {
                             currentPasswordInput.current?.focus();
                         }
                     }}
-                    className="space-y-6"
+                    className="flex flex-col gap-(--card-spacing)"
                 >
                     {({ errors, processing }) => (
                         <>
-                            <div className="grid gap-2">
-                                <Label htmlFor="current_password">
-                                    Current password
-                                </Label>
+                            <CardContent>
+                                <FieldGroup>
+                                    <Field
+                                        data-invalid={!!errors.current_password}
+                                    >
+                                        <FieldLabel htmlFor="current_password">
+                                            Current password
+                                        </FieldLabel>
 
-                                <PasswordInput
-                                    id="current_password"
-                                    ref={currentPasswordInput}
-                                    name="current_password"
-                                    className="mt-1 block w-full"
-                                    autoComplete="current-password"
-                                    placeholder="Current password"
-                                />
+                                        <PasswordInput
+                                            id="current_password"
+                                            ref={currentPasswordInput}
+                                            name="current_password"
+                                            autoComplete="current-password"
+                                            placeholder="Current password"
+                                            aria-invalid={
+                                                !!errors.current_password
+                                            }
+                                            aria-describedby={
+                                                errors.current_password
+                                                    ? 'current-password-error'
+                                                    : undefined
+                                            }
+                                        />
 
-                                <InputError message={errors.current_password} />
-                            </div>
+                                        <FieldError id="current-password-error">
+                                            {errors.current_password}
+                                        </FieldError>
+                                    </Field>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">New password</Label>
+                                    <Field data-invalid={!!errors.password}>
+                                        <FieldLabel htmlFor="password">
+                                            New password
+                                        </FieldLabel>
 
-                                <PasswordInput
-                                    id="password"
-                                    ref={passwordInput}
-                                    name="password"
-                                    className="mt-1 block w-full"
-                                    autoComplete="new-password"
-                                    placeholder="New password"
-                                    passwordrules={props.passwordRules}
-                                />
+                                        <PasswordInput
+                                            id="password"
+                                            ref={passwordInput}
+                                            name="password"
+                                            autoComplete="new-password"
+                                            placeholder="New password"
+                                            passwordrules={props.passwordRules}
+                                            aria-invalid={!!errors.password}
+                                            aria-describedby={
+                                                errors.password
+                                                    ? 'password-error'
+                                                    : undefined
+                                            }
+                                        />
 
-                                <InputError message={errors.password} />
-                            </div>
+                                        <FieldError id="password-error">
+                                            {errors.password}
+                                        </FieldError>
+                                    </Field>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    Confirm password
-                                </Label>
+                                    <Field
+                                        data-invalid={
+                                            !!errors.password_confirmation
+                                        }
+                                    >
+                                        <FieldLabel htmlFor="password_confirmation">
+                                            Confirm password
+                                        </FieldLabel>
 
-                                <PasswordInput
-                                    id="password_confirmation"
-                                    name="password_confirmation"
-                                    className="mt-1 block w-full"
-                                    autoComplete="new-password"
-                                    placeholder="Confirm password"
-                                    passwordrules={props.passwordRules}
-                                />
+                                        <PasswordInput
+                                            id="password_confirmation"
+                                            name="password_confirmation"
+                                            autoComplete="new-password"
+                                            placeholder="Confirm password"
+                                            passwordrules={props.passwordRules}
+                                            aria-invalid={
+                                                !!errors.password_confirmation
+                                            }
+                                            aria-describedby={
+                                                errors.password_confirmation
+                                                    ? 'password-confirmation-error'
+                                                    : undefined
+                                            }
+                                        />
 
-                                <InputError
-                                    message={errors.password_confirmation}
-                                />
-                            </div>
+                                        <FieldError id="password-confirmation-error">
+                                            {errors.password_confirmation}
+                                        </FieldError>
+                                    </Field>
+                                </FieldGroup>
+                            </CardContent>
 
-                            <div className="flex items-center gap-4">
+                            <CardFooter className="justify-end">
                                 <Button
+                                    type="submit"
                                     disabled={processing}
                                     data-test="update-password-button"
                                 >
                                     Save
                                 </Button>
-                            </div>
+                            </CardFooter>
                         </>
                     )}
                 </Form>
-            </div>
+            </Card>
 
             {/* @chisel-2fa */}
             <ManageTwoFactor

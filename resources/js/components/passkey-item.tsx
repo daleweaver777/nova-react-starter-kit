@@ -1,15 +1,27 @@
 import { KeyRound, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogMedia,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
+    Item,
+    ItemActions,
+    ItemContent,
+    ItemDescription,
+    ItemMedia,
+    ItemTitle,
+} from '@/components/ui/item';
 import type { Passkey } from '@/types/auth';
 
 type Props = {
@@ -25,69 +37,89 @@ export default function PasskeyItem({ passkey, onDelete }: Props) {
         onDelete(passkey.id, () => setIsDeleting(false));
     };
 
+    /*
+     * `ItemGroup` is `role="list"`, and ARIA requires a list to own listitem
+     * children. `ui/item.tsx` renders a plain div and never sets one, so without
+     * this the passkeys list exposes zero items to assistive tech. Set here
+     * rather than in the registry file so `shadcn apply` cannot undo it.
+     */
     return (
-        <div className="flex items-center justify-between border-b p-4 last:border-b-0">
-            <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted">
-                    <KeyRound className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div className="space-y-1">
-                    <div className="flex items-center gap-2.5">
-                        <p className="font-medium tracking-tight">
-                            {passkey.name}
-                        </p>
-                        {passkey.authenticator && (
-                            <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase ring-1 ring-border ring-inset">
-                                {passkey.authenticator}
-                            </span>
-                        )}
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                        Added {passkey.created_at_diff}
-                        {passkey.last_used_at_diff && (
-                            <>
-                                <span className="mx-1 text-muted-foreground/50">
-                                    /
-                                </span>
-                                Last used {passkey.last_used_at_diff}
-                            </>
-                        )}
-                    </p>
-                </div>
-            </div>
+        <Item
+            role="listitem"
+            className="rounded-none border-x-0 border-t-0 border-b border-b-border last:border-b-0"
+        >
+            <ItemMedia
+                variant="icon"
+                className="size-8 rounded-lg bg-muted text-muted-foreground"
+            >
+                <KeyRound />
+            </ItemMedia>
 
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    >
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Remove</span>
-                    </Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogTitle>Remove passkey</DialogTitle>
-                    <DialogDescription>
-                        Are you sure you want to remove the "{passkey.name}"
-                        passkey? You will no longer be able to use it to sign
-                        in.
-                    </DialogDescription>
-                    <DialogFooter className="gap-2">
-                        <DialogClose asChild>
-                            <Button variant="secondary">Cancel</Button>
-                        </DialogClose>
-                        <Button
-                            variant="destructive"
-                            onClick={handleDelete}
-                            disabled={isDeleting}
+            <ItemContent>
+                <ItemTitle>
+                    {passkey.name}
+                    {passkey.authenticator && (
+                        <Badge
+                            variant="secondary"
+                            className="tracking-wide uppercase"
                         >
-                            {isDeleting ? 'Removing...' : 'Remove passkey'}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </div>
+                            {passkey.authenticator}
+                        </Badge>
+                    )}
+                </ItemTitle>
+                <ItemDescription>
+                    Added {passkey.created_at_diff}
+                    {passkey.last_used_at_diff && (
+                        <>
+                            <span className="mx-1 text-muted-foreground/50">
+                                /
+                            </span>
+                            Last used {passkey.last_used_at_diff}
+                        </>
+                    )}
+                </ItemDescription>
+            </ItemContent>
+
+            <ItemActions>
+                <AlertDialog>
+                    <AlertDialogTrigger
+                        render={
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                            />
+                        }
+                    >
+                        <Trash2 />
+                        <span className="sr-only">Remove</span>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent size="sm">
+                        <AlertDialogHeader>
+                            <AlertDialogMedia className="bg-destructive/10 text-destructive">
+                                <Trash2 />
+                            </AlertDialogMedia>
+                            <AlertDialogTitle>Remove passkey?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                The "{passkey.name}" passkey will be removed and
+                                you will no longer be able to use it to sign in.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                                variant="destructive"
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                            >
+                                Remove
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            </ItemActions>
+        </Item>
     );
 }

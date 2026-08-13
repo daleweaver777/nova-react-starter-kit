@@ -1,0 +1,79 @@
+{
+  "ignore": {
+    "overrides": [
+      {
+        "files": ["resources/js/pages/welcome.tsx"],
+        // This file used to be excluded wholesale as starter-kit scaffolding.
+        // It is the landing page and does ship, so it is linted now; the
+        // transition-all and SVG-precision findings were fixed rather than
+        // suppressed. Only `no-giant-component` is still silenced: the length
+        // is one enormous inline Laravel logo, and splitting it up is a rewrite
+        // of the page rather than a refactor. Drop this override along with the
+        // placeholder markup whenever the landing page is replaced.
+        "rules": ["react-doctor/no-giant-component"]
+      },
+      // Both rules below are false positives on use-flash-toast.ts. Scoped to that
+      // one file so the rules keep running everywhere else.
+      {
+        "files": ["resources/js/hooks/use-flash-toast.ts"],
+        "rules": [
+          // The effect returns `router.on('flash', ...)`, and Inertia types that
+          // as returning VoidFunction (@inertiajs/core/types/router.d.ts) — the
+          // unsubscribe. That is the rule's own prescribed fix ("return
+          // unsubscribe if the subscribe call already gave you one"); the rule
+          // only pattern-matches removeEventListener/clearInterval/.disconnect().
+          "react-doctor/effect-needs-cleanup",
+          // The file has one importer, components/ui/sonner.tsx, which calls
+          // useFlashToast(). The rule appears not to resolve the `@/` alias.
+          // Deleting this hook silently breaks every Inertia::flash('toast', ...)
+          // — see .ai/rules/ui.md.
+          "deslop/unused-file"
+        ]
+      },
+      // The three below are all in `components/ui/**`, which `shadcn apply` and
+      // `shadcn add` overwrite. Suppressing here rather than editing the source
+      // keeps the fix from being silently reverted on the next registry update —
+      // see the re-application list in .ai/rules/ui.md for why that matters.
+      {
+        "files": ["resources/js/components/ui/toggle-group.tsx"],
+        // Not a real issue in this app: `babel-plugin-react-compiler` is enabled
+        // (vite.config.ts), and it already memoizes the provider value. The
+        // compiled output builds `{ variant, size, spacing, orientation }` behind
+        // a cache keyed on exactly those four, and only recreates the Provider
+        // element when `children` or that value change. The rule reads the source,
+        // not the compiler output.
+        "rules": ["react-doctor/jsx-no-constructed-context-values"]
+      },
+      {
+        "files": ["resources/js/components/ui/field.tsx"],
+        // FieldError keys validation messages by array index. Harmless here: the
+        // list is `uniqueErrors`, deduplicated by message, and each <li> holds
+        // only text — no state, no inputs, nothing an identity swap could lose.
+        // The wrapper is role="alert", so any change re-announces the whole block
+        // regardless of how React reconciled the children.
+        "rules": ["react-doctor/no-array-index-as-key"]
+      },
+      {
+        "files": ["resources/js/components/ui/item.tsx"],
+        // The rule wants <ul> instead of <div role="list"> on ItemGroup, but that
+        // fix is wrong here: <ul> requires <li> children and `Item` renders a div
+        // (useRender defaultTagName), so it would produce invalid markup and worse
+        // semantics than the role does.
+        //
+        // The genuine gap the rule did NOT catch — role="list" with no
+        // role="listitem" children — is fixed at the call site in
+        // components/passkey-item.tsx, which shadcn does not overwrite.
+        "rules": ["react-doctor/prefer-tag-over-role"]
+      },
+      {
+        "files": ["resources/js/components/nav-footer.tsx"],
+        // False positive. The bare `<a>` is a Base UI `render` prop, not the
+        // rendered output: SidebarMenuButton feeds it through useRender +
+        // mergeProps (ui/sidebar.tsx), which merges the icon and
+        // <span>{item.title}</span> onto it. The anchor has an accessible name
+        // at runtime; the rule reads the JSX literally. See .ai/rules/components.md.
+        "rules": ["react-doctor/anchor-has-content"]
+      }
+    ]
+  }
+}

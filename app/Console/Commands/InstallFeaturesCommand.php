@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use InvalidArgumentException;
 use Laravel\Chisel\Chisel;
 use Laravel\Chisel\Question;
 use Laravel\Chisel\Script;
@@ -40,9 +41,13 @@ class InstallFeaturesCommand extends Command
         /** @var Script $script */
         $script = require base_path('chisel.php');
 
-        $providedAnswers = $this->option('answers') === null
-            ? []
-            : json_decode((string) $this->option('answers'), true, 512, JSON_THROW_ON_ERROR);
+        try {
+            $providedAnswers = $this->providedAnswers($script);
+        } catch (InvalidArgumentException $e) {
+            $this->components->error($e->getMessage());
+
+            return self::FAILURE;
+        }
 
         $answers = $script
             ->collectAnswers()
@@ -69,6 +74,81 @@ class InstallFeaturesCommand extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Resolve answers supplied ahead of time so the kit can be installed unattended.
+     *
+     * `--answers` wins. Otherwise `NOVA_AUTH_FEATURES` takes a comma-separated list of
+     * feature keys, or `none` to disable every optional feature:
+     *
+     *     NOVA_AUTH_FEATURES=registration laravel new my-app --using=...
+     *
+     * This is read here rather than in `shouldDeferInstallerHooks()` on purpose. That
+     * guard is what stops the hook running twice -- once while `composer create-project`
+     * is still going and again when the installer invokes it for real -- so the env var
+     * must not short-circuit it. Deferring first and reading the variable on the real
+     * run keeps both behaviours intact.
+     *
+     * @return array<string, mixed>
+     */
+    protected function providedAnswers(Script $script): array
+    {
+        if ($this->option('answers') !== null) {
+            return json_decode((string) $this->option('answers'), true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        $value = $this->environmentValue('NOVA_AUTH_FEATURES');
+
+        if ($value === null || trim($value) === '') {
+            return [];
+        }
+
+        $features = array_values(array_filter(
+            array_map(trim(...), explode(',', $value)),
+            fn (string $feature): bool => $feature !== '',
+        ));
+
+        if (array_map(strtolower(...), $features) === ['none']) {
+            $features = [];
+        }
+
+        $this->validateFeatures($script, $features);
+
+        return ['auth_features' => $features];
+    }
+
+    /**
+     * Fail loudly on a typo, which would otherwise read as "disable that feature".
+     *
+     * @param  array<int, string>  $features
+     */
+    protected function validateFeatures(Script $script, array $features): void
+    {
+        $question = collect($script->questions())
+            ->first(fn (Question $question): bool => $question->name === 'auth_features');
+
+        if (! $question instanceof Question) {
+            return;
+        }
+
+        $known = array_map(strval(...), array_keys($question->options));
+        $unknown = array_values(array_diff($features, $known));
+
+        if ($unknown !== []) {
+            throw new InvalidArgumentException(sprintf(
+                'Unknown NOVA_AUTH_FEATURES value(s): %s. Valid features are: %s (or "none").',
+                implode(', ', $unknown),
+                implode(', ', $known),
+            ));
+        }
+    }
+
+    protected function environmentValue(string $name): ?string
+    {
+        $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);
+
+        return is_string($value) ? $value : null;
     }
 
     protected function shouldDeferInstallerHooks(): bool
