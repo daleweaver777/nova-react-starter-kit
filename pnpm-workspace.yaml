@@ -27,6 +27,15 @@ blockExoticSubdeps: true
 # pre-existing and pulled in transitively -- semver@6 by @babel/core,
 # undici-types@6 by @types/node. Drop each entry when its parent stops
 # resolving the pre-provenance major.
+#
+# laravel-vite-plugin publishes attestations inconsistently rather than
+# continuously: 3.0.0 had none, 3.1.0 was attested, and 3.2.0 -- currently the
+# latest -- dropped it again. `no-downgrade` reads that as a possible package
+# takeover and hard-fails `pnpm install`, which without a committed lockfile
+# breaks every fresh install of this kit. A first-party Laravel package losing
+# attestation between releases is a release-pipeline lapse, not a compromise.
+# Drop this entry once it publishes attestations on consecutive releases.
 trustPolicyExclude:
+  - laravel-vite-plugin
   - semver
   - undici-types
