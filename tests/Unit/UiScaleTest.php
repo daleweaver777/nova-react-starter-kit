@@ -26,19 +26,6 @@ class UiScaleTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * Geometry that is deliberately fixed. Each entry is a hairline, a hit area or a
-     * viewport gutter -- none of them should shrink when the type scale does.
-     *
-     * @var array<string, string>
-     */
-    private const ALLOWED = [
-        'dialog.tsx' => 'calc(100%-2rem)',      // viewport gutter, not a control size
-        'navigation-menu.tsx' => '-10px',       // invisible hover bridge above the popup
-        'sidebar.tsx' => '2px',                 // drag-rail hairline
-        'tooltip.tsx' => 'calc(-50%-2px)',      // arrow centring against its own border
-    ];
-
-    /**
      * @return iterable<string, array{string}>
      */
     public static function uiComponents(): iterable
@@ -56,8 +43,22 @@ class UiScaleTest extends TestCase
     #[DataProvider('uiComponents')]
     public function test_it_keeps_shadcn_components_on_the_density_scale(string $path)
     {
+        // Kept local rather than a class constant on purpose: the Laravel installer
+        // runs `pest --drift` to convert these tests to Pest's function style, and
+        // drift leaves class constants at file top level, where `private const` is a
+        // parse error. Anything inside the method body converts cleanly.
+        //
+        // Geometry that is deliberately fixed. Each entry is a hairline, a hit area
+        // or a viewport gutter -- none should shrink when the type scale does.
+        $allowed = [
+            'dialog.tsx' => 'calc(100%-2rem)',      // viewport gutter, not a control size
+            'navigation-menu.tsx' => '-10px',       // invisible hover bridge above the popup
+            'sidebar.tsx' => '2px',                 // drag-rail hairline
+            'tooltip.tsx' => 'calc(-50%-2px)',      // arrow centring against its own border
+        ];
+
         $offenders = [];
-        $exempt = self::ALLOWED[basename($path)] ?? null;
+        $exempt = $allowed[basename($path)] ?? null;
 
         foreach (file($path) as $number => $line) {
             preg_match_all('/\[[^\]]*\d(?:\.\d+)?(?:rem|px|em)\b[^\]]*\]/', $line, $matches);
