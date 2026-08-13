@@ -56,6 +56,12 @@ That has one sharp edge for contributors. With no `composer.lock`, `composer ins
 LARAVEL_INSTALLER_DEFER_HOOKS=1 composer install
 ```
 
+Working on the kit also generates `composer.lock`, `package-lock.json` and `pnpm-lock.yaml`, none of which should be committed. They are not in `.gitignore` deliberately — that file is copied into every generated app, and those apps *should* commit their lockfiles. Exclude them locally instead, once per clone:
+
+```sh
+printf 'composer.lock\npackage-lock.json\npnpm-lock.yaml\n' >> .git/info/exclude
+```
+
 ### Rebasing on upstream
 
 ```sh
