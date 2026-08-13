@@ -142,9 +142,9 @@ export default function Profile(
                                                             address.
                                                         </span>
                                                     )}
-                                        {/* @end-chisel-email-verification */}
                                                 </FieldDescription>
                                             )}
+                                        {/* @end-chisel-email-verification */}
                                     </Field>
                                 </FieldGroup>
                             </CardContent>

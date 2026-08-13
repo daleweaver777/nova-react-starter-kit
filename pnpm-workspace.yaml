@@ -21,6 +21,16 @@ minimumReleaseAge: 1440
 trustPolicy: no-downgrade
 blockExoticSubdeps: true
 
+# `.npmrc` sets `ignore-scripts=true`, so no dependency gets to run install
+# scripts here. pnpm 10+ still fails the install to make you acknowledge the
+# ones it skipped (ERR_PNPM_IGNORED_BUILDS, currently unrs-resolver), which
+# breaks `composer setup` and any plain `pnpm install`. The Laravel installer
+# itself passes `--ignore-scripts` and so slips past it, which is why this only
+# bites after the app is created. Turning the gate off is not a loosening --
+# the scripts were already refused; this just stops pnpm erroring about a
+# decision the kit has already made.
+strictDepBuilds: false
+
 # Two legacy transitive dependencies predate npm provenance attestation, so
 # `no-downgrade` reads them as a trust downgrade against their attested
 # siblings (semver 7.x, undici 7.x). Neither is a takeover: both are
