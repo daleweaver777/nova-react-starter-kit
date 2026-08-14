@@ -53,19 +53,14 @@ class UserFactory extends Factory
      */
     public function withTwoFactor(): static
     {
-        // The markers sit inside the state array rather than around the whole
-        // `return`, which would leave `withTwoFactor(): static {}` -- an empty body
-        // that breaks its own return type and fails `composer types:check`. The
-        // upstream kit has that bug; it goes unnoticed because chisel's apply()
-        // step runs `composer lint` (Pint) and never phpstan. Keeping the method
-        // inert matches upstream's intent: AuthenticationTest still references it
-        // and skips itself via `skipUnlessFortifyHas()` when 2FA is off.
+        /* @chisel-2fa */
         return $this->state(fn (array $attributes) => [
-            /* @chisel-2fa */
+
             'two_factor_secret' => encrypt('secret'),
             'two_factor_recovery_codes' => encrypt(json_encode(['recovery-code-1'])),
             'two_factor_confirmed_at' => now(),
-            /* @end-chisel-2fa */
+
         ]);
+        /* @end-chisel-2fa */
     }
 }
