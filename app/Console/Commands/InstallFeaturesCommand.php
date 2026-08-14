@@ -204,13 +204,22 @@ class InstallFeaturesCommand extends Command
      * npm (see the `setup` composer script, which is what Chisel reads). If the
      * user then passes `--pnpm`, `--yarn` or `--bun`, the installer deletes the
      * foreign *lock file* but leaves `node_modules` alone, and pnpm/yarn/bun
-     * will happily install *over* npm's flat tree and exit 0. The result is a
-     * hybrid tree where `tsc` resolves stale declarations, so a brand-new app
-     * fails `types:check` with errors like `'auth' is of type 'unknown'`.
+     * install straight *over* npm's flat tree and exit 0.
      *
-     * Removing the directory costs one re-install -- ~2s, since the lock file
-     * this hook just wrote is kept and stays valid for npm -- and is the only
-     * way to keep the kit correct across every package manager.
+     * Measured against `--pnpm`, that hybrid tree is ugly but harmless: 492 root
+     * entries against a clean 35, yet `types:check`, `lint:check` and
+     * `format:check` all pass, because `@inertiajs/react` resolves
+     * `@inertiajs/core` through `.pnpm` and never reads the stale copy at the
+     * root. It is removed anyway so all four managers behave identically -- the
+     * same overlay is untested for `--yarn` and `--bun` -- and to avoid leaving
+     * npm's hoisted transitives lying around as phantom deps.
+     *
+     * Two costs, both accepted. The re-install is ~4.5s on a warm npm cache and
+     * longer cold. And with no package-manager flag the installer never
+     * reinstalls at all (`$runPackageManager` is false when the confirm is
+     * skipped under `-n` or declined), so the app ends with no `node_modules`
+     * where upstream leaves a working one; the lock file, `public/build` and the
+     * printed install command make that one command to recover.
      */
     protected function removeNodeModules(): void
     {
