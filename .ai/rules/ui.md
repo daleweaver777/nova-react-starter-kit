@@ -23,7 +23,7 @@ If it ever does need to be uniform, width is the wrong axis — use `text-sm poi
 ## Keep registry components on the density scale — no bracketed hard units
 The density preset (see `.ai/rules/css.md`) only reaches values written on Tailwind's scale. A hard-coded `text-[0.8rem]` or `min-w-[96px]` opts out and stays the same size in both densities. The shadcn registry ships these occasionally, so re-check after every `shadcn add`/`apply`.
 
-`tests/Unit/UiScaleTest.php` guards it: bracketed values containing a number plus rem/px/em fail unless they reference `var(--…)`. Four genuine-geometry exemptions are listed in that file (dialog viewport gutter, nav-menu hover bridge, sidebar drag rail, tooltip arrow centring) — add to that list only for real geometry, never to silence a control size.
+`tests/Unit/UiScaleTest.php` guards it: bracketed values containing a number plus rem/px/em fail unless they reference `var(--…)`. Three genuine-geometry exemptions are listed in that file (dialog viewport gutter, sidebar drag rail, tooltip arrow centring) — add to that list only for real geometry, never to silence a control size.
 
 Prefer the scale step over the literal: `rounded-sm/md/lg` over `rounded-[calc(var(--radius)-3px)]`, `ring-3` over `ring-[3px]`, `translate-x-10` over `translate-x-[2.5rem]`.
 
@@ -38,4 +38,4 @@ So `max-w-xs` (container — 20rem at any density) is correct for a dialog/sheet
 
 `tests/Unit/UiScaleTest.php` guards alert-dialog, dialog and sheet against numeric `max-w-*`.
 
-Menus are the opposite case: `min-w-*` on dropdown/select popups is a *minimum* that should densify with the rest, so the spacing scale is right there. `DropdownMenuSubContent` uses `min-w-24`, which is exactly stock's 96px at default density.
+Menus are the opposite case: `min-w-*` on a dropdown popup is a *minimum* that should densify with the rest, so the spacing scale is right there. `DropdownMenuSubContent` uses `min-w-24`, which is exactly stock's 96px at default density.

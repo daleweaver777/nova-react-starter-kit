@@ -48,11 +48,10 @@ class UiScaleTest extends TestCase
         // drift leaves class constants at file top level, where `private const` is a
         // parse error. Anything inside the method body converts cleanly.
         //
-        // Geometry that is deliberately fixed. Each entry is a hairline, a hit area
-        // or a viewport gutter -- none should shrink when the type scale does.
+        // Geometry that is deliberately fixed. Each entry is a hairline, a viewport
+        // gutter or an arrow offset -- none should shrink when the type scale does.
         $allowed = [
             'dialog.tsx' => 'calc(100%-2rem)',      // viewport gutter, not a control size
-            'navigation-menu.tsx' => '-10px',       // invisible hover bridge above the popup
             'sidebar.tsx' => '2px',                 // drag-rail hairline
             'tooltip.tsx' => 'calc(-50%-2px)',      // arrow centring against its own border
         ];
