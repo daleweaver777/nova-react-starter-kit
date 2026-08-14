@@ -7,6 +7,13 @@ paths:
 
 These rules are shared verbatim between the starter kit and apps generated from it. Where the two differ, both cases are called out.
 
+## `pnpm-workspace.yaml` ships unconditionally, even for npm users
+Keep the file. The upstream kit ships one too, and it cannot be conditionally omitted: nothing knows which package manager was picked until long after the files are on disk. npm, yarn and bun ignore it entirely, so it is inert rather than wrong.
+
+The consequence worth knowing is that everything it configures — `minimumReleaseAge`, `trustPolicy`, `blockExoticSubdeps` — is pnpm-only. An app installed with npm silently gets none of that supply-chain hardening. `.npmrc` (`ignore-scripts=true`) is the only part that applies to npm as well.
+
+`publicHoistPattern: ['@inertiajs/core']` is upstream's and is load-bearing under pnpm's strict tree — do not drop it while trimming.
+
 ## Lockfiles: the kit resolves fresh, an app pins
 The starter kit commits no `pnpm-lock.yaml` or `composer.lock` — like the upstream kit, every install resolves against whatever is current that day. A generated app is the opposite: it commits both, and should.
 
@@ -25,5 +32,12 @@ Before adding anything else, confirm with `npm view <pkg>@<version> dist.attesta
 ## strictDepBuilds is off because ignore-scripts is on
 `.npmrc` sets `ignore-scripts=true`, so no dependency runs install scripts. pnpm 10+ still fails the install to make you acknowledge the ones it skipped (`ERR_PNPM_IGNORED_BUILDS`, currently `unrs-resolver`), which breaks `composer setup` and any plain `pnpm install`. The Laravel installer passes `--ignore-scripts` and slips past it, so this surfaces only after the app exists — an app with a warm `node_modules` will not see it until a clean install. Turning the gate off is not a loosening: the scripts were already refused.
 
-## Declare pnpm in the composer setup script
-`chisel` picks its package manager from the `setup`/`dev` composer scripts when no lockfile exists. If `setup` says `npm install`, the install hook builds a flat npm `node_modules`, then the Laravel installer layers pnpm on top; the hybrid tree makes `tsc` resolve stale declarations and `pnpm types:check` fails in a brand-new app. Keep `pnpm` in those scripts — the installer rewrites them for whichever manager was chosen.
+## The composer setup script must say `npm`, and the install hook must clean up
+Two rules that only make sense together. Both are about the kit; a generated app has already been rewritten and is free of this.
+
+`chisel` picks its package manager from the `setup`/`dev` composer scripts when no lockfile exists, so those scripts decide what the `install:features` hook runs. Keep them saying `npm`:
+
+- The Laravel installer's `configureComposerScripts()` rewrites those scripts with `str_replace(['npm', 'npx', 'ppnpm'], [$pm, ...])`. It assumes the source says `npm`. Writing `pnpm install` there means an npm user keeps `pnpm install` and a bun user gets `pbun install`.
+- npm ships with Node. `pnpm install` in the hook hard-fails the whole install on any machine without pnpm on `PATH` — which is most of them, and there is no fallback.
+
+But the hook runs *before* `laravel new` has chosen a package manager, and nothing passes that choice down. So when the user passes `--pnpm`/`--yarn`/`--bun`, the installer deletes the foreign *lock file* and leaves `node_modules` — and pnpm/yarn/bun install straight over npm's flat tree and exit 0. The hybrid tree makes `tsc` resolve stale declarations, so a brand-new app fails `types:check` with `'auth' is of type 'unknown'`. `InstallFeaturesCommand::removeNodeModules()` deletes the directory after the hook's build so the installer's manager starts clean. Do not drop it as a redundant re-install: the lock file is kept, so the second install is ~2s, and it is the only thing making the kit package-manager agnostic.

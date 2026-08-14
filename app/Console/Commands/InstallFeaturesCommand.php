@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use InvalidArgumentException;
 use Laravel\Chisel\Chisel;
 use Laravel\Chisel\Question;
@@ -71,6 +72,7 @@ class InstallFeaturesCommand extends Command
 
         if (! $skipNode) {
             $this->buildAssets();
+            $this->removeNodeModules();
         }
 
         return self::SUCCESS;
@@ -192,5 +194,30 @@ class InstallFeaturesCommand extends Command
             fn () => $npm->run('build'),
             'Building assets...',
         );
+    }
+
+    /**
+     * Hand the installer a clean slate for whichever package manager it picked.
+     *
+     * This hook runs before `laravel new` has chosen a package manager, and no
+     * signal for that choice is passed down -- so the install above always uses
+     * npm (see the `setup` composer script, which is what Chisel reads). If the
+     * user then passes `--pnpm`, `--yarn` or `--bun`, the installer deletes the
+     * foreign *lock file* but leaves `node_modules` alone, and pnpm/yarn/bun
+     * will happily install *over* npm's flat tree and exit 0. The result is a
+     * hybrid tree where `tsc` resolves stale declarations, so a brand-new app
+     * fails `types:check` with errors like `'auth' is of type 'unknown'`.
+     *
+     * Removing the directory costs one re-install -- ~2s, since the lock file
+     * this hook just wrote is kept and stays valid for npm -- and is the only
+     * way to keep the kit correct across every package manager.
+     */
+    protected function removeNodeModules(): void
+    {
+        $path = base_path('node_modules');
+
+        if (is_dir($path)) {
+            (new Filesystem)->deleteDirectory($path);
+        }
     }
 }

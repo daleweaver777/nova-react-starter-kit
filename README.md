@@ -10,10 +10,14 @@ It keeps the upstream kit's install-time scaffolding intact, so the auth-feature
 laravel new my-app --using=https://github.com/daleweaver777/nova-react-starter-kit --pest
 ```
 
-The installer asks which authentication features to keep and trims the rest — files, config, routes, tests, npm packages and all. Pin a release by appending a ref:
+The installer asks which authentication features to keep and trims the rest — files, config, routes, tests, npm packages and all.
+
+Any package manager works: add `--pnpm`, `--bun` or `--yarn` to pick one, or pass nothing and get npm.
+
+A `#ref` can be appended to pin the kit to a branch, tag or commit. Only refs pushed to the remote resolve — an unpushed local tag fails the download — so push the tag first:
 
 ```sh
-laravel new my-app --using=https://github.com/daleweaver777/nova-react-starter-kit#v1.0.0 --pest
+laravel new my-app --using=https://github.com/daleweaver777/nova-react-starter-kit#main --pest
 ```
 
 ### Unattended installs
@@ -39,8 +43,10 @@ composer nova:tools   # installs the shadcn + migrate-radix-to-base agent skills
 Run the React Doctor lint sweep whenever you want it — it is deliberately not wired to a hook, and not a dependency:
 
 ```sh
-pnpm doctor
+npm run doctor
 ```
+
+Use `run` rather than the bare script name: `pnpm doctor` resolves to pnpm's own built-in `doctor` command instead of this script. `pnpm run doctor` is fine.
 
 ## What this repo ships
 
