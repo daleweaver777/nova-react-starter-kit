@@ -14,11 +14,13 @@ The installer asks which authentication features to keep and trims the rest — 
 
 Any package manager works: add `--pnpm`, `--bun` or `--yarn` to pick one, or pass nothing and get npm.
 
-A `#ref` can be appended to pin the kit to a branch, tag or commit. Only refs pushed to the remote resolve — an unpushed local tag fails the download — so push the tag first:
+Install from `main`. It is the only ref that carries the Nova theme, and the command above already resolves to it; appending `#main` is equivalent, just explicit:
 
 ```sh
 laravel new my-app --using=https://github.com/daleweaver777/nova-react-starter-kit#main --pest
 ```
+
+Do not install from this repo's tags. The `upstream-sync-*` tags point at commits in *upstream's* history and contain none of the Nova theme, so installing one silently gives you a stock Laravel kit. They are comparison markers only — see [Syncing with upstream](#syncing-with-upstream).
 
 ### Unattended installs
 
@@ -70,7 +72,11 @@ printf 'composer.lock\npackage-lock.json\npnpm-lock.yaml\n' >> .git/info/exclude
 
 ### Syncing with upstream
 
-The fork point is recorded as an annotated tag, `upstream-sync-<date>`, pointing at the upstream commit this kit was last reconciled against. It exists so a sync reviews only what is genuinely new, instead of re-reading the whole delta:
+The fork point is recorded as an annotated tag, `upstream-sync-<date>`, pointing at the upstream commit this kit was last reconciled against. Its only job is to make the comparison against the official kit cheap: a sync reviews what upstream has added since, instead of re-reading the whole delta each time.
+
+These tags are bookkeeping and nothing else. Each points into *upstream's* history, so none of them contain the Nova theme and none is an install target — installs come from `main`.
+
+A sync then runs:
 
 ```sh
 git remote add upstream https://github.com/laravel/react-starter-kit.git
