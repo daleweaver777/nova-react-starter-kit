@@ -68,14 +68,33 @@ Working on the kit also generates `composer.lock`, `package-lock.json` and `pnpm
 printf 'composer.lock\npackage-lock.json\npnpm-lock.yaml\n' >> .git/info/exclude
 ```
 
-### Rebasing on upstream
+### Syncing with upstream
+
+The fork point is recorded as an annotated tag, `upstream-sync-<date>`, pointing at the upstream commit this kit was last reconciled against. It exists so a sync reviews only what is genuinely new, instead of re-reading the whole delta:
 
 ```sh
 git remote add upstream https://github.com/laravel/react-starter-kit.git
-git fetch upstream && git merge upstream/main
+git fetch upstream
+git diff upstream-sync-2026-08-12..upstream/main   # only what upstream added since
+git merge upstream/main
 ```
 
-The delta is concentrated in `resources/js` and `resources/css`. Because the UI components are ported from Radix to Base UI, any upstream change under `resources/js/components/ui/` lands as a conflict to resolve by hand.
+After a successful merge, move the baseline forward and push it, or the next sync re-reviews work already resolved:
+
+```sh
+git tag -a upstream-sync-$(date +%F) upstream/main -m "Fork point: laravel/react-starter-kit main"
+git push origin upstream-sync-$(date +%F)
+```
+
+Upstream ships a "Sync Laravel skeleton changes" commit every week or two, so expect to do this regularly rather than in one large catch-up.
+
+#### Where the conflicts land
+
+The delta is concentrated in `resources/js` and `resources/css`; the PHP side is four files and merges cleanly. Because the UI components are ported from Radix to Base UI, any upstream change under `resources/js/components/ui/` lands as a conflict to resolve by hand.
+
+Two areas are worth extra care. `pages/settings/profile.tsx`, `pages/settings/appearance.tsx`, `layouts/settings/layout.tsx`, `two-factor-setup-modal.tsx` and both manifests are among upstream's most frequently touched files *and* rewritten here, so they conflict on most syncs.
+
+The other is deletions. This kit removes nine components upstream still maintains — `app-header.tsx`, `auth-split-layout.tsx`, `app-header-layout.tsx`, `auth-card-layout.tsx`, `input-error.tsx`, `ui/select.tsx`, `ui/icon.tsx`, `ui/navigation-menu.tsx` and `ui/collapsible.tsx`. Upstream edits to these arrive as modify/delete conflicts; resolve them with `git rm`, or they silently return to the tree.
 
 Keep the `@chisel-*` markers balanced when editing marked files — `laravel/chisel` throws on two consecutive opening or closing markers for the same tag, and an unbalanced pair silently produces invalid output for whoever disables that feature.
 
