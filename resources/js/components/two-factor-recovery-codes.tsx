@@ -40,26 +40,56 @@ export default function TwoFactorRecoveryCodes({
     errors,
 }: Props) {
     const [codesAreVisible, setCodesAreVisible] = useState<boolean>(false);
+    const [isFetchingRecoveryCodes, setIsFetchingRecoveryCodes] =
+        useState<boolean>(false);
     const [isRegenerateOpen, setIsRegenerateOpen] = useState<boolean>(false);
     const codesSectionRef = useRef<HTMLUListElement | null>(null);
-    const canRegenerateCodes = recoveryCodesList.length > 0 && codesAreVisible;
+    const isFetchingRecoveryCodesRef = useRef<boolean>(false);
+    const canRegenerateCodes =
+        recoveryCodesList.length > 0 &&
+        codesAreVisible &&
+        !isFetchingRecoveryCodes;
+
+    const loadRecoveryCodes = useCallback(async (): Promise<void> => {
+        if (isFetchingRecoveryCodesRef.current) {
+            return;
+        }
+
+        isFetchingRecoveryCodesRef.current = true;
+        setIsFetchingRecoveryCodes(true);
+
+        try {
+            await fetchRecoveryCodes();
+        } finally {
+            isFetchingRecoveryCodesRef.current = false;
+            setIsFetchingRecoveryCodes(false);
+        }
+    }, [fetchRecoveryCodes]);
 
     const toggleCodesVisibility = useCallback(async () => {
-        if (!codesAreVisible && !recoveryCodesList.length) {
-            await fetchRecoveryCodes();
+        if (isFetchingRecoveryCodesRef.current) {
+            return;
         }
 
-        setCodesAreVisible((areVisible) => !areVisible);
+        if (codesAreVisible) {
+            setCodesAreVisible(false);
 
-        if (!codesAreVisible) {
-            setTimeout(() => {
-                codesSectionRef.current?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                });
+            return;
+        }
+
+        setCodesAreVisible(true);
+
+        setTimeout(() => {
+            codesSectionRef.current?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
             });
+        });
+
+        if (!recoveryCodesList.length) {
+            await loadRecoveryCodes();
         }
-    }, [codesAreVisible, recoveryCodesList.length, fetchRecoveryCodes]);
+    }, [codesAreVisible, recoveryCodesList.length, loadRecoveryCodes]);
 
     const RecoveryCodeIconComponent = codesAreVisible ? EyeOff : Eye;
 
@@ -149,7 +179,7 @@ export default function TwoFactorRecoveryCodes({
                                 options={{ preserveScroll: true }}
                                 onSuccess={() => {
                                     setIsRegenerateOpen(false);
-                                    fetchRecoveryCodes();
+                                    void loadRecoveryCodes();
                                 }}
                                 className="grid gap-4"
                             >
@@ -190,13 +220,17 @@ export default function TwoFactorRecoveryCodes({
 
                 <Button
                     onClick={toggleCodesVisibility}
+                    disabled={isFetchingRecoveryCodes}
+                    aria-busy={isFetchingRecoveryCodes}
                     aria-expanded={codesAreVisible}
                     aria-controls={
                         codesAreVisible ? RECOVERY_CODES_ID : undefined
                     }
                 >
                     <RecoveryCodeIconComponent aria-hidden="true" />
-                    {codesAreVisible ? 'Hide' : 'View'} recovery codes
+                    {isFetchingRecoveryCodes
+                        ? 'Loading recovery codes'
+                        : `${codesAreVisible ? 'Hide' : 'View'} recovery codes`}
                 </Button>
             </CardFooter>
         </Card>
