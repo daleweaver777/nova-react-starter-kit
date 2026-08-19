@@ -35,6 +35,7 @@ export default function ConfirmPassword() {
 
             <Form
                 {...store.form()}
+                noValidate
                 resetOnError={['password']}
                 resetOnSuccess={['password']}
             >

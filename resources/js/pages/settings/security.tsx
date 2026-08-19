@@ -51,6 +51,7 @@ export default function Security(props: Props) {
 
                 <Form
                     {...SecurityController.update.form()}
+                    noValidate
                     options={{
                         preserveScroll: true,
                     }}

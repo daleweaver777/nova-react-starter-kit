@@ -176,6 +176,7 @@ export default function TwoFactorRecoveryCodes({
                         <AlertDialogContent size="sm">
                             <Form
                                 {...regenerateRecoveryCodes.form()}
+                                noValidate
                                 options={{ preserveScroll: true }}
                                 onSuccess={() => {
                                     setIsRegenerateOpen(false);

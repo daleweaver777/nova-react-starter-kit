@@ -93,6 +93,7 @@ export default function ManageTwoFactor(props: Props) {
                             <AlertDialogContent size="sm">
                                 <Form
                                     {...disable.form()}
+                                    noValidate
                                     className="grid gap-4"
                                 >
                                     {({ processing }) => (
@@ -139,6 +140,7 @@ export default function ManageTwoFactor(props: Props) {
                     ) : (
                         <Form
                             {...enable.form()}
+                            noValidate
                             onSuccess={() => setShowSetupModal(true)}
                         >
                             {({ processing }) => (

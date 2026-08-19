@@ -59,6 +59,7 @@ export default function TwoFactorChallenge() {
             <div className="flex flex-col gap-6">
                 <Form
                     {...store.form()}
+                    noValidate
                     className="flex flex-col gap-4"
                     onError={() => setCode('')}
                     resetOnError

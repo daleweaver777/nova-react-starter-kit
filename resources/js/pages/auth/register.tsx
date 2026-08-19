@@ -22,6 +22,7 @@ export default function Register({ passwordRules }: Props) {
             <Head title="Register" />
             <Form
                 {...store.form()}
+                noValidate
                 resetOnError={['password', 'password_confirmation']}
                 resetOnSuccess={['password', 'password_confirmation']}
                 className="flex flex-col gap-6"

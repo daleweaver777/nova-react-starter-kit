@@ -88,7 +88,11 @@ export default function PasskeyRegistration({ onSuccess }: Props) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
+        <form
+            noValidate
+            onSubmit={handleSubmit}
+            className="flex w-full flex-col gap-4"
+        >
             <Field data-invalid={!!error}>
                 <FieldLabel htmlFor="passkey-name">Passkey name</FieldLabel>
                 <Input
