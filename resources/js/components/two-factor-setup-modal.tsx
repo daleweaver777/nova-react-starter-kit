@@ -204,6 +204,11 @@ function TwoFactorVerificationStep({
                                     !!errors?.confirmTwoFactorAuthentication
                                         ?.code
                                 }
+                                aria-describedby={
+                                    errors?.confirmTwoFactorAuthentication?.code
+                                        ? 'otp-error'
+                                        : undefined
+                                }
                                 maxLength={OTP_MAX_LENGTH}
                                 value={code}
                                 onChange={setCode}
@@ -223,7 +228,7 @@ function TwoFactorVerificationStep({
                                     )}
                                 </InputOTPGroup>
                             </InputOTP>
-                            <FieldError>
+                            <FieldError id="otp-error">
                                 {errors?.confirmTwoFactorAuthentication?.code}
                             </FieldError>
                         </Field>

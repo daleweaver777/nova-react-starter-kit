@@ -97,7 +97,14 @@ export default function TwoFactorChallenge() {
                                     data-invalid={!!errors.code}
                                     className="text-center"
                                 >
+                                    <FieldLabel
+                                        htmlFor="code"
+                                        className="sr-only"
+                                    >
+                                        Authentication code
+                                    </FieldLabel>
                                     <InputOTP
+                                        id="code"
                                         name="code"
                                         maxLength={OTP_MAX_LENGTH}
                                         value={code}
@@ -106,6 +113,12 @@ export default function TwoFactorChallenge() {
                                         pattern={REGEXP_ONLY_DIGITS}
                                         autoFocus
                                         containerClassName="justify-center"
+                                        aria-invalid={!!errors.code}
+                                        aria-describedby={
+                                            errors.code
+                                                ? 'code-error'
+                                                : undefined
+                                        }
                                     >
                                         <InputOTPGroup>
                                             {Array.from(
@@ -119,7 +132,9 @@ export default function TwoFactorChallenge() {
                                             )}
                                         </InputOTPGroup>
                                     </InputOTP>
-                                    <FieldError>{errors.code}</FieldError>
+                                    <FieldError id="code-error">
+                                        {errors.code}
+                                    </FieldError>
                                 </Field>
                             )}
 
