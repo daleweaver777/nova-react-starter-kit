@@ -5,6 +5,7 @@ import { KeyRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FieldError, FieldSeparator } from '@/components/ui/field';
 import { Spinner } from '@/components/ui/spinner';
+import { dashboard } from '@/routes';
 
 type Props = {
     routes?: {
@@ -30,7 +31,7 @@ export default function PasskeyVerify({
             },
         }),
         onSuccess: (response) => {
-            router.visit(response.redirect ?? '/dashboard');
+            router.visit(response.redirect ?? dashboard());
         },
     });
 
