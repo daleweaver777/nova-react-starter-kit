@@ -25,11 +25,12 @@ export default function PasswordInput({
             <InputGroupAddon align="inline-end">
                 <InputGroupButton
                     size="icon-xs"
+                    type="button"
+                    className="size-7"
                     onClick={() => setShowPassword((prev) => !prev)}
                     aria-label={
                         showPassword ? 'Hide password' : 'Show password'
                     }
-                    tabIndex={-1}
                 >
                     {showPassword ? <EyeOff /> : <Eye />}
                 </InputGroupButton>
