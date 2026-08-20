@@ -81,7 +81,7 @@ A sync then runs:
 ```sh
 git remote add upstream https://github.com/laravel/react-starter-kit.git
 git fetch upstream
-git diff upstream-sync-2026-08-12..upstream/main   # only what upstream added since
+git diff upstream-sync-2026-08-20..upstream/main   # only what upstream added since
 git merge upstream/main
 ```
 
@@ -91,6 +91,18 @@ After a successful merge, move the baseline forward and push it, or the next syn
 git tag -a upstream-sync-$(date +%F) upstream/main -m "Fork point: laravel/react-starter-kit main"
 git push origin upstream-sync-$(date +%F)
 ```
+
+#### Restoring upstream comparisons after a fresh clone
+
+A normal clone from this repository includes the pushed `upstream-sync-*` tags, so deleting a local clone does not lose the comparison baseline. Git remotes are local configuration, though, and only `origin` is created by `git clone`. Restore Laravel's remote before the next sync:
+
+```sh
+git remote add upstream https://github.com/laravel/react-starter-kit.git
+git fetch upstream
+git diff upstream-sync-2026-08-20..upstream/main
+```
+
+Use the newest `upstream-sync-*` tag as the left side of the comparison. Before deleting an old clone, make sure both `main` and the newest sync tag have been pushed to `origin`; untracked files, ignored files, local branches, `.git/info/exclude` and remote configuration do not survive a fresh clone.
 
 Upstream ships a "Sync Laravel skeleton changes" commit every week or two, so expect to do this regularly rather than in one large catch-up.
 
