@@ -22,6 +22,8 @@ return [
         // behind.)
         'resources/js/components/alert-error.tsx',
         'resources/js/hooks/use-clipboard.ts',
+        'tests/Unit/RecoveryCodesLoadingStateTest.php',
+        'tests/Unit/TwoFactorChallengeAccessibilityTest.php',
     ],
 
     'two_factor_otp_package' => 'input-otp',
@@ -35,5 +37,6 @@ return [
         // neither.
         'resources/js/components/ui/empty.tsx',
         'resources/js/components/ui/item.tsx',
+        'tests/Unit/PasskeyRedirectTest.php',
     ],
 ];
