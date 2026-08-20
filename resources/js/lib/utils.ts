@@ -10,3 +10,27 @@ export function cn(...inputs: ClassValue[]) {
 export function toUrl(url: NonNullable<InertiaLinkProps['href']>): string {
     return typeof url === 'string' ? url : url.url;
 }
+
+type FormErrors = Record<string, unknown>;
+
+export function focusFirstFormError(formId: string, errors: FormErrors): void {
+    const form = document.getElementById(formId);
+
+    if (!(form instanceof HTMLFormElement)) {
+        return;
+    }
+
+    for (const fieldName of Object.keys(errors)) {
+        const field = form.elements.namedItem(fieldName);
+
+        if (!(field instanceof HTMLElement)) {
+            continue;
+        }
+
+        field.focus();
+
+        if (document.activeElement === field) {
+            return;
+        }
+    }
+}

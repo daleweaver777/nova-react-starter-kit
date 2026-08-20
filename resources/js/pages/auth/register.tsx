@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import { useId } from 'react';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import {
     FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { focusFirstFormError } from '@/lib/utils';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 
@@ -17,12 +19,16 @@ type Props = {
 };
 
 export default function Register({ passwordRules }: Props) {
+    const formId = useId();
+
     return (
         <>
             <Head title="Register" />
             <Form
+                id={formId}
                 {...store.form()}
                 noValidate
+                onError={(errors) => focusFirstFormError(formId, errors)}
                 resetOnError={['password', 'password_confirmation']}
                 resetOnSuccess={['password', 'password_confirmation']}
                 className="flex flex-col gap-6"

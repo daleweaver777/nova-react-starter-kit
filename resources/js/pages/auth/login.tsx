@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import { useId } from 'react';
 import AuthStatus from '@/components/auth-status';
 /* @chisel-passkeys */
 import PasskeyVerify from '@/components/passkey-verify';
@@ -14,6 +15,7 @@ import {
     FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { focusFirstFormError } from '@/lib/utils';
 /* @chisel-registration */
 import { register } from '@/routes';
 /* @end-chisel-registration */
@@ -26,6 +28,8 @@ type Props = {
 };
 
 export default function Login({ status, canResetPassword }: Props) {
+    const formId = useId();
+
     return (
         <>
             <Head title="Log in" />
@@ -37,8 +41,10 @@ export default function Login({ status, canResetPassword }: Props) {
             {/* @end-chisel-passkeys */}
 
             <Form
+                id={formId}
                 {...store.form()}
                 noValidate
+                onError={(errors) => focusFirstFormError(formId, errors)}
                 resetOnError={['password']}
                 resetOnSuccess={['password']}
                 className="flex flex-col gap-6"

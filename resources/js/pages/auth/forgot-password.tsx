@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import { useId } from 'react';
 import AuthStatus from '@/components/auth-status';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
@@ -9,10 +10,13 @@ import {
     FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { focusFirstFormError } from '@/lib/utils';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
 
 export default function ForgotPassword({ status }: { status?: string }) {
+    const formId = useId();
+
     return (
         <>
             <Head title="Forgot password" />
@@ -21,8 +25,10 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
             <div className="flex flex-col gap-6">
                 <Form
+                    id={formId}
                     {...email.form()}
                     noValidate
+                    onError={(errors) => focusFirstFormError(formId, errors)}
                     className="flex flex-col gap-6"
                 >
                     {({ processing, errors }) => (

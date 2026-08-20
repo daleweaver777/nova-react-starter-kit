@@ -1,6 +1,6 @@
 import { Form, Head, setLayoutProps } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { textLinkClasses } from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
@@ -11,7 +11,7 @@ import {
     InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { OTP_MAX_LENGTH } from '@/hooks/use-two-factor-auth';
-import { cn } from '@/lib/utils';
+import { cn, focusFirstFormError } from '@/lib/utils';
 import { store } from '@/routes/two-factor/login';
 
 /**
@@ -35,6 +35,7 @@ const AUTH_CONFIG = {
 } as const;
 
 export default function TwoFactorChallenge() {
+    const formId = useId();
     const [showRecoveryInput, setShowRecoveryInput] = useState<boolean>(false);
     const [code, setCode] = useState<string>('');
 
@@ -58,10 +59,14 @@ export default function TwoFactorChallenge() {
 
             <div className="flex flex-col gap-6">
                 <Form
+                    id={formId}
                     {...store.form()}
                     noValidate
                     className="flex flex-col gap-4"
-                    onError={() => setCode('')}
+                    onError={(errors) => {
+                        setCode('');
+                        focusFirstFormError(formId, errors);
+                    }}
                     resetOnError
                     resetOnSuccess={!showRecoveryInput}
                 >

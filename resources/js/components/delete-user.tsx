@@ -1,6 +1,6 @@
 import { Form } from '@inertiajs/react';
 import { Trash2Icon } from 'lucide-react';
-import { useRef } from 'react';
+import { useId } from 'react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import PasswordInput from '@/components/password-input';
 import {
@@ -25,9 +25,10 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { focusFirstFormError } from '@/lib/utils';
 
 export default function DeleteUser() {
-    const passwordInput = useRef<HTMLInputElement>(null);
+    const formId = useId();
 
     return (
         <Card className="text-destructive ring-destructive/25">
@@ -56,12 +57,15 @@ export default function DeleteUser() {
 
                     <AlertDialogContent size="sm">
                         <Form
+                            id={formId}
                             {...ProfileController.destroy.form()}
                             noValidate
                             options={{
                                 preserveScroll: true,
                             }}
-                            onError={() => passwordInput.current?.focus()}
+                            onError={(errors) =>
+                                focusFirstFormError(formId, errors)
+                            }
                             resetOnError={['password']}
                             resetOnSuccess
                             className="grid gap-4"
@@ -96,7 +100,6 @@ export default function DeleteUser() {
                                         <PasswordInput
                                             id="password"
                                             name="password"
-                                            ref={passwordInput}
                                             placeholder="Password"
                                             autoComplete="current-password"
                                             aria-invalid={!!errors.password}

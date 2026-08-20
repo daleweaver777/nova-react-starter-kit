@@ -1,5 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
-import { useRef } from 'react';
+import { useId } from 'react';
 import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
 /* @chisel-passkeys */
 import type { Props as ManagePasskeysProps } from '@/components/manage-passkeys';
@@ -25,6 +25,7 @@ import {
     FieldGroup,
     FieldLabel,
 } from '@/components/ui/field';
+import { focusFirstFormError } from '@/lib/utils';
 import { edit } from '@/routes/security';
 
 type Props = {
@@ -33,8 +34,7 @@ type Props = {
     ManageTwoFactorProps /* @end-chisel-2fa */;
 
 export default function Security(props: Props) {
-    const passwordInput = useRef<HTMLInputElement>(null);
-    const currentPasswordInput = useRef<HTMLInputElement>(null);
+    const formId = useId();
 
     return (
         <>
@@ -50,6 +50,7 @@ export default function Security(props: Props) {
                 </CardHeader>
 
                 <Form
+                    id={formId}
                     {...SecurityController.update.form()}
                     noValidate
                     options={{
@@ -61,15 +62,7 @@ export default function Security(props: Props) {
                         'current_password',
                     ]}
                     resetOnSuccess
-                    onError={(errors) => {
-                        if (errors.password) {
-                            passwordInput.current?.focus();
-                        }
-
-                        if (errors.current_password) {
-                            currentPasswordInput.current?.focus();
-                        }
-                    }}
+                    onError={(errors) => focusFirstFormError(formId, errors)}
                     className="flex flex-col gap-(--card-spacing)"
                 >
                     {({ errors, processing }) => (
@@ -85,7 +78,6 @@ export default function Security(props: Props) {
 
                                         <PasswordInput
                                             id="current_password"
-                                            ref={currentPasswordInput}
                                             name="current_password"
                                             autoComplete="current-password"
                                             placeholder="Current password"
@@ -111,7 +103,6 @@ export default function Security(props: Props) {
 
                                         <PasswordInput
                                             id="password"
-                                            ref={passwordInput}
                                             name="password"
                                             autoComplete="new-password"
                                             placeholder="New password"

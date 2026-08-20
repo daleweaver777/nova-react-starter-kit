@@ -1,7 +1,14 @@
 import { Form } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { Check, Copy, ScanLine } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useId,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import AlertError from '@/components/alert-error';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,6 +39,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useAppearance } from '@/hooks/use-appearance';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { OTP_MAX_LENGTH } from '@/hooks/use-two-factor-auth';
+import { focusFirstFormError } from '@/lib/utils';
 import { confirm } from '@/routes/two-factor';
 
 function GridScanIcon() {
@@ -155,6 +163,7 @@ function TwoFactorVerificationStep({
     onClose: () => void;
     onBack: () => void;
 }) {
+    const formId = useId();
     const [code, setCode] = useState<string>('');
     const pinInputContainerRef = useRef<HTMLDivElement>(null);
 
@@ -168,10 +177,14 @@ function TwoFactorVerificationStep({
 
     return (
         <Form
+            id={formId}
             {...confirm.form()}
             noValidate
             onSuccess={() => onClose()}
-            onError={() => setCode('')}
+            onError={(errors) => {
+                setCode('');
+                focusFirstFormError(formId, errors);
+            }}
             resetOnError
             resetOnSuccess
             className="w-full"

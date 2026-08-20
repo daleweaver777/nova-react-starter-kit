@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import { useId } from 'react';
 /* @chisel-passkeys */
 import {
     index as confirmOptions,
@@ -14,9 +15,12 @@ import {
     FieldGroup,
     FieldLabel,
 } from '@/components/ui/field';
+import { focusFirstFormError } from '@/lib/utils';
 import { store } from '@/routes/password/confirm';
 
 export default function ConfirmPassword() {
+    const formId = useId();
+
     return (
         <>
             <Head title="Confirm password" />
@@ -34,8 +38,10 @@ export default function ConfirmPassword() {
             {/* @end-chisel-passkeys */}
 
             <Form
+                id={formId}
                 {...store.form()}
                 noValidate
+                onError={(errors) => focusFirstFormError(formId, errors)}
                 resetOnError={['password']}
                 resetOnSuccess={['password']}
             >

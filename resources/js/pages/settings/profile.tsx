@@ -1,4 +1,5 @@
 import { Form, Head, usePage } from '@inertiajs/react';
+import { useId } from 'react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/delete-user';
 /* @chisel-email-verification */
@@ -23,6 +24,7 @@ import {
     FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { focusFirstFormError } from '@/lib/utils';
 import { edit } from '@/routes/profile';
 /* @chisel-email-verification */
 import { send } from '@/routes/verification';
@@ -44,6 +46,7 @@ export default function Profile(
     },
     /* @end-chisel-email-verification */
 ) {
+    const formId = useId();
     const { auth } = usePage<PageProps>().props;
 
     return (
@@ -59,8 +62,10 @@ export default function Profile(
                 </CardHeader>
 
                 <Form
+                    id={formId}
                     {...ProfileController.update.form()}
                     noValidate
+                    onError={(errors) => focusFirstFormError(formId, errors)}
                     options={{
                         preserveScroll: true,
                     }}
