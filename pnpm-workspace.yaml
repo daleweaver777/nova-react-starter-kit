@@ -1,8 +1,8 @@
 packages:
-  - '.'
+    - '.'
 
 publicHoistPattern:
-  - '@inertiajs/core'
+    - '@inertiajs/core'
 
 # Supply-chain hardening. Quarantine freshly published versions so a
 # compromised release has time to be reported and unpublished, and refuse a
@@ -21,15 +21,19 @@ minimumReleaseAge: 1440
 trustPolicy: no-downgrade
 blockExoticSubdeps: true
 
-# `.npmrc` sets `ignore-scripts=true`, so no dependency gets to run install
-# scripts here. pnpm 10+ still fails the install to make you acknowledge the
-# ones it skipped (ERR_PNPM_IGNORED_BUILDS, currently unrs-resolver), which
-# breaks `composer setup` and any plain `pnpm install`. The Laravel installer
-# itself passes `--ignore-scripts` and so slips past it, which is why this only
-# bites after the app is created. Turning the gate off is not a loosening --
-# the scripts were already refused; this just stops pnpm erroring about a
-# decision the kit has already made.
+# pnpm 11 reads only auth and registry settings from `.npmrc`, so npm's
+# `ignore-scripts=true` does not govern pnpm. pnpm instead denies dependency
+# builds not approved in `allowBuilds`. Keep that default-deny behavior, but do
+# not make a newly introduced build script fatal in this lockfile-free kit:
+# the person running `laravel new` cannot fix a fresh transitive release.
+# `strictDepBuilds: false` warns and skips the script; it does not run it.
 strictDepBuilds: false
+
+# unrs-resolver ships prebuilt native bindings and does not need its fallback
+# build in this project. Deny it explicitly so pnpm does not append a
+# `set this to true or false` placeholder on the next install.
+allowBuilds:
+    unrs-resolver: false
 
 # Two legacy transitive dependencies predate npm provenance attestation, so
 # `no-downgrade` reads them as a trust downgrade against their attested
@@ -46,6 +50,6 @@ strictDepBuilds: false
 # attestation between releases is a release-pipeline lapse, not a compromise.
 # Drop this entry once it publishes attestations on consecutive releases.
 trustPolicyExclude:
-  - laravel-vite-plugin
-  - semver
-  - undici-types
+    - laravel-vite-plugin
+    - semver
+    - undici-types

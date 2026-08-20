@@ -1,11 +1,12 @@
 ---
 paths:
-  - 'resources/js/components/**'
+    - 'resources/js/components/**'
 ---
 
 # Components
 
 ## anchor-has-content false-fires on Base UI render props
+
 react-doctor's `anchor-has-content` flags `render={<a href=... />}` as an empty anchor (e.g. nav-footer.tsx). It is a false positive.
 
 Base UI composes via `useRender` + `mergeProps`, so the childless `<a/>` literal receives the parent's children at runtime — `SidebarMenuButton`/`Button` pass the icon and `<span>{title}</span>` straight through. The detector only reads the JSX literal and cannot see the composition.
@@ -15,6 +16,7 @@ Do not "fix" it by adding `aria-label` — that overrides an accessible name the
 `doctor.config.jsonc` now suppresses the rule for `nav-footer.tsx` via `ignore.overrides`, so scans are clean. If a new component renders a bare `<a>` through a `render` prop it will false-fire again — add that file to the same override rather than editing the markup.
 
 ## Destructive confirmations use AlertDialog, size="sm"
+
 Deleting an account, removing a passkey, regenerating recovery codes and disabling 2FA all confirm through `ui/alert-dialog.tsx`, not `Dialog`: AlertDialog ignores an outside click. (Escape still closes it — that is standard dialog a11y, not a bug.)
 
 Conventions: `size="sm"` keeps the header stacked and centred at every width and splits the footer into two equal columns — `size="default"` switches to icon-beside-title at `sm`. Media is `AlertDialogMedia` tinted `bg-destructive/10 text-destructive`; the action is `AlertDialogAction variant="destructive"`.

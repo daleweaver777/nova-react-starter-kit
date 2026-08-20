@@ -35,6 +35,16 @@ class SubmitButtonTypeTest extends TestCase
     #[DataProvider('inertiaForms')]
     public function test_it_gives_every_inertia_form_an_explicit_submit_button(string $path)
     {
-        $this->assertStringContainsString('type="submit"', file_get_contents($path));
+        preg_match_all('/<Form\b.*?<\/Form>/s', file_get_contents($path), $matches);
+
+        $this->assertNotEmpty($matches[0]);
+
+        foreach ($matches[0] as $index => $form) {
+            $this->assertStringContainsString(
+                'type="submit"',
+                $form,
+                basename($path).' form '.($index + 1).' has no explicit submit button',
+            );
+        }
     }
 }

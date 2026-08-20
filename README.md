@@ -7,7 +7,7 @@ It keeps the upstream kit's install-time scaffolding intact, so the auth-feature
 ## Installing
 
 ```sh
-laravel new my-app --using=https://github.com/daleweaver777/nova-react-starter-kit --pest
+laravel new my-app --using=https://github.com/daleweaver777/nova-react-starter-kit --pest --boost
 ```
 
 The installer asks which authentication features to keep and trims the rest — files, config, routes, tests, npm packages and all.
@@ -17,10 +17,10 @@ Any package manager works: add `--pnpm`, `--bun` or `--yarn` to pick one, or pas
 Install from `main`. It is the only ref that carries the Nova theme, and the command above already resolves to it; appending `#main` is equivalent, just explicit:
 
 ```sh
-laravel new my-app --using=https://github.com/daleweaver777/nova-react-starter-kit#main --pest
+laravel new my-app --using=https://github.com/daleweaver777/nova-react-starter-kit#main --pest --boost
 ```
 
-Do not install from this repo's tags. The `upstream-sync-*` tags point at commits in *upstream's* history and contain none of the Nova theme, so installing one silently gives you a stock Laravel kit. They are comparison markers only — see [Syncing with upstream](#syncing-with-upstream).
+Do not install from this repo's tags. The `upstream-sync-*` tags point at commits in _upstream's_ history and contain none of the Nova theme, so installing one silently gives you a stock Laravel kit. They are comparison markers only — see [Syncing with upstream](#syncing-with-upstream).
 
 ### Unattended installs
 
@@ -28,7 +28,7 @@ Do not install from this repo's tags. The `upstream-sync-*` tags point at commit
 
 ```sh
 NOVA_AUTH_FEATURES=registration laravel new my-app \
-  --using=https://github.com/daleweaver777/nova-react-starter-kit --pest
+  --using=https://github.com/daleweaver777/nova-react-starter-kit --pest --boost
 ```
 
 Valid values: `email-verification`, `registration`, `2fa`, `passkeys`, `password-confirmation`. An unrecognised value fails the install rather than silently dropping the feature.
@@ -52,7 +52,7 @@ Use `run` rather than the bare script name: `pnpm doctor` resolves to pnpm's own
 
 ## What this repo ships
 
-Only two things that are not stock upstream or generated: `.ai/rules/` and `doctor.config.jsonc`. Everything else an app needs — `CLAUDE.md`, `AGENTS.md`, `.mcp.json`, `boost.json`, `.claude/skills/` — is produced by `laravel new --boost`, so it stays current rather than pinned to whatever this fork last committed.
+The durable project-specific additions are `.ai/rules/` and `doctor.config.jsonc`. This repository also carries a minimal `AGENTS.md` that routes agents working directly on the kit into those rules. In generated applications, `laravel new --boost` produces the full agent guidelines, MCP configuration, Boost configuration and skills so they stay current rather than being pinned to this fork.
 
 ## Working on this kit
 
@@ -64,7 +64,7 @@ That has one sharp edge for contributors. With no `composer.lock`, `composer ins
 LARAVEL_INSTALLER_DEFER_HOOKS=1 composer install
 ```
 
-Working on the kit also generates `composer.lock`, `package-lock.json` and `pnpm-lock.yaml`, none of which should be committed. They are not in `.gitignore` deliberately — that file is copied into every generated app, and those apps *should* commit their lockfiles. Exclude them locally instead, once per clone:
+Working on the kit also generates `composer.lock`, `package-lock.json` and `pnpm-lock.yaml`, none of which should be committed. They are not in `.gitignore` deliberately — that file is copied into every generated app, and those apps _should_ commit their lockfiles. Exclude them locally instead, once per clone:
 
 ```sh
 printf 'composer.lock\npackage-lock.json\npnpm-lock.yaml\n' >> .git/info/exclude
@@ -74,7 +74,7 @@ printf 'composer.lock\npackage-lock.json\npnpm-lock.yaml\n' >> .git/info/exclude
 
 The fork point is recorded as an annotated tag, `upstream-sync-<date>`, pointing at the upstream commit this kit was last reconciled against. Its only job is to make the comparison against the official kit cheap: a sync reviews what upstream has added since, instead of re-reading the whole delta each time.
 
-These tags are bookkeeping and nothing else. Each points into *upstream's* history, so none of them contain the Nova theme and none is an install target — installs come from `main`.
+These tags are bookkeeping and nothing else. Each points into _upstream's_ history, so none of them contain the Nova theme and none is an install target — installs come from `main`.
 
 A sync then runs:
 
@@ -110,7 +110,7 @@ Upstream ships a "Sync Laravel skeleton changes" commit every week or two, so ex
 
 The delta is concentrated in `resources/js` and `resources/css`; the PHP side is four files and merges cleanly. Because the UI components are ported from Radix to Base UI, any upstream change under `resources/js/components/ui/` lands as a conflict to resolve by hand.
 
-Two areas are worth extra care. `pages/settings/profile.tsx`, `pages/settings/appearance.tsx`, `layouts/settings/layout.tsx`, `two-factor-setup-modal.tsx` and both manifests are among upstream's most frequently touched files *and* rewritten here, so they conflict on most syncs.
+Two areas are worth extra care. `pages/settings/profile.tsx`, `pages/settings/appearance.tsx`, `layouts/settings/layout.tsx`, `two-factor-setup-modal.tsx` and both manifests are among upstream's most frequently touched files _and_ rewritten here, so they conflict on most syncs.
 
 The other is deletions. This kit removes nine components upstream still maintains — `app-header.tsx`, `auth-split-layout.tsx`, `app-header-layout.tsx`, `auth-card-layout.tsx`, `input-error.tsx`, `ui/select.tsx`, `ui/icon.tsx`, `ui/navigation-menu.tsx` and `ui/collapsible.tsx`. Upstream edits to these arrive as modify/delete conflicts; resolve them with `git rm`, or they silently return to the tree.
 

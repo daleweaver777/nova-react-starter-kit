@@ -36,6 +36,21 @@ class PasswordResetOnErrorTest extends TestCase
     #[DataProvider('passwordForms')]
     public function test_it_clears_password_fields_when_a_form_comes_back_with_errors(string $path)
     {
-        $this->assertStringContainsString('resetOnError', file_get_contents($path));
+        preg_match_all('/<Form\b.*?<\/Form>/s', file_get_contents($path), $matches);
+
+        $passwordForms = array_values(array_filter(
+            $matches[0],
+            fn (string $form): bool => str_contains($form, 'PasswordInput'),
+        ));
+
+        $this->assertNotEmpty($passwordForms);
+
+        foreach ($passwordForms as $index => $form) {
+            $this->assertStringContainsString(
+                'resetOnError',
+                $form,
+                basename($path).' password form '.($index + 1).' does not reset after an error',
+            );
+        }
     }
 }
