@@ -81,7 +81,7 @@ A sync then runs:
 ```sh
 git remote add upstream https://github.com/laravel/react-starter-kit.git
 git fetch upstream
-git diff upstream-sync-2026-08-20..upstream/main   # only what upstream added since
+git diff upstream-sync-2026-08-24..upstream/main   # only what upstream added since
 git merge upstream/main
 ```
 
@@ -99,7 +99,7 @@ A normal clone from this repository includes the pushed `upstream-sync-*` tags, 
 ```sh
 git remote add upstream https://github.com/laravel/react-starter-kit.git
 git fetch upstream
-git diff upstream-sync-2026-08-20..upstream/main
+git diff upstream-sync-2026-08-24..upstream/main
 ```
 
 Use the newest `upstream-sync-*` tag as the left side of the comparison. Before deleting an old clone, make sure both `main` and the newest sync tag have been pushed to `origin`; untracked files, ignored files, local branches, `.git/info/exclude` and remote configuration do not survive a fresh clone.

@@ -16,6 +16,15 @@ export default defineConfig({
          * Pin to IPv4 so the hot file stays reachable.
          */
         host: '127.0.0.1',
+        watch: {
+            ignored: [
+                '**/.agents/**',
+                '**/.claude/**',
+                '**/.cursor/**',
+                '**/.junie/**',
+                '**/vendor/**',
+            ],
+        },
     },
     plugins: [
         /**
