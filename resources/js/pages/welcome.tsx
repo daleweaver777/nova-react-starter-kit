@@ -13,7 +13,7 @@ export default function Welcome() {
     return (
         <>
             <Head title="Welcome" />
-            <div className="flex min-h-svh flex-col items-center bg-background p-6 text-foreground lg:justify-center lg:p-8">
+            <div className="bg-background text-foreground flex min-h-svh flex-col items-center p-6 lg:justify-center lg:p-8">
                 <header className="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl">
                     <nav className="flex items-center justify-end gap-2">
                         {auth.user ? (
@@ -51,20 +51,20 @@ export default function Welcome() {
                 </header>
                 <div className="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
                     <main className="flex w-full max-w-[335px] flex-col-reverse lg:max-w-4xl lg:flex-row">
-                        <div className="flex-1 rounded-br-xl rounded-bl-xl border border-border bg-card p-6 pb-12 text-sm text-card-foreground lg:rounded-tl-xl lg:rounded-br-none lg:p-20">
-                            <h1 className="mb-1 font-heading text-lg font-semibold">
+                        <div className="border-border bg-card text-card-foreground flex-1 rounded-br-xl rounded-bl-xl border p-6 pb-12 text-sm lg:rounded-tl-xl lg:rounded-br-none lg:p-20">
+                            <h1 className="font-heading mb-1 text-lg font-semibold">
                                 Let's get started
                             </h1>
-                            <p className="mb-2 text-muted-foreground">
+                            <p className="text-muted-foreground mb-2">
                                 Laravel has an incredibly rich ecosystem.
                                 <br />
                                 We suggest starting with the following.
                             </p>
                             <ul className="mb-4 flex flex-col lg:mb-6">
-                                <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-border">
-                                    <span className="relative bg-card py-1">
-                                        <span className="flex size-3.5 items-center justify-center rounded-full border border-border bg-background">
-                                            <span className="size-1.5 rounded-full bg-border" />
+                                <li className="before:border-border relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l">
+                                    <span className="bg-card relative py-1">
+                                        <span className="border-border bg-background flex size-3.5 items-center justify-center rounded-full border">
+                                            <span className="bg-border size-1.5 rounded-full" />
                                         </span>
                                     </span>
                                     <span>
@@ -96,10 +96,10 @@ export default function Welcome() {
                                         </a>
                                     </span>
                                 </li>
-                                <li className="relative flex items-center gap-4 py-2 before:absolute before:top-0 before:bottom-1/2 before:left-[0.4rem] before:border-l before:border-border">
-                                    <span className="relative bg-card py-1">
-                                        <span className="flex size-3.5 items-center justify-center rounded-full border border-border bg-background">
-                                            <span className="size-1.5 rounded-full bg-border" />
+                                <li className="before:border-border relative flex items-center gap-4 py-2 before:absolute before:top-0 before:bottom-1/2 before:left-[0.4rem] before:border-l">
+                                    <span className="bg-card relative py-1">
+                                        <span className="border-border bg-background flex size-3.5 items-center justify-center rounded-full border">
+                                            <span className="bg-border size-1.5 rounded-full" />
                                         </span>
                                     </span>
                                     <span>
@@ -398,7 +398,7 @@ export default function Welcome() {
                                     />
                                 </g>
                             </svg>
-                            <div className="absolute inset-0 rounded-t-xl border border-border lg:rounded-t-none lg:rounded-r-xl"></div>
+                            <div className="border-border absolute inset-0 rounded-t-xl border lg:rounded-t-none lg:rounded-r-xl"></div>
                         </div>
                     </main>
                 </div>

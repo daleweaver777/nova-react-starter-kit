@@ -152,7 +152,7 @@ export default function TwoFactorChallenge() {
                                 Log in
                             </Button>
 
-                            <div className="text-center text-sm text-muted-foreground">
+                            <div className="text-muted-foreground text-center text-sm">
                                 <span>or you can </span>
                                 <button
                                     type="button"

@@ -11,18 +11,18 @@ export default function Dashboard() {
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-muted-foreground/20" />
+                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
+                        <PlaceholderPattern className="stroke-muted-foreground/20 absolute inset-0 size-full" />
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-muted-foreground/20" />
+                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
+                        <PlaceholderPattern className="stroke-muted-foreground/20 absolute inset-0 size-full" />
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-muted-foreground/20" />
+                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
+                        <PlaceholderPattern className="stroke-muted-foreground/20 absolute inset-0 size-full" />
                     </div>
                 </div>
-                <div className="relative min-h-svh flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-muted-foreground/20" />
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-svh flex-1 overflow-hidden rounded-xl border md:min-h-min">
+                    <PlaceholderPattern className="stroke-muted-foreground/20 absolute inset-0 size-full" />
                 </div>
             </div>
         </>

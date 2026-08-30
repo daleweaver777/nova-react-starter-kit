@@ -81,7 +81,7 @@ A sync then runs:
 ```sh
 git remote add upstream https://github.com/laravel/react-starter-kit.git
 git fetch upstream
-git diff upstream-sync-2026-08-24..upstream/main   # only what upstream added since
+git diff upstream-sync-2026-08-30..upstream/main   # only what upstream added since
 git merge upstream/main
 ```
 
@@ -99,12 +99,22 @@ A normal clone from this repository includes the pushed `upstream-sync-*` tags, 
 ```sh
 git remote add upstream https://github.com/laravel/react-starter-kit.git
 git fetch upstream
-git diff upstream-sync-2026-08-24..upstream/main
+git diff upstream-sync-2026-08-30..upstream/main
 ```
 
 Use the newest `upstream-sync-*` tag as the left side of the comparison. Before deleting an old clone, make sure both `main` and the newest sync tag have been pushed to `origin`; untracked files, ignored files, local branches, `.git/info/exclude` and remote configuration do not survive a fresh clone.
 
 Upstream ships a "Sync Laravel skeleton changes" commit every week or two, so expect to do this regularly rather than in one large catch-up.
+
+#### Toolchain and formatter migrations
+
+Treat an upstream toolchain replacement as two changes even when upstream ships it in one commit. First port the toolchain and its small semantic fixes; then run the new formatter across the Nova fork in a separate formatting-only commit. That keeps reviews useful and prevents formatter churn from hiding a lost Nova customization.
+
+For the Vite+ migration, carry over the `vp` build, development and check scripts; the Vite+ dependencies and `vite.config.ts` lint/format configuration; the `composer ci:check` change; and Chisel's `check:fix` call. Remove the superseded ESLint and Prettier dependencies and configuration files. Preserve the fork's `doctor` script, Base UI and Inter dependencies, IPv4 development-server setting, watch exclusions, no-Bunny-font configuration and all `pnpm-workspace.yaml` supply-chain controls.
+
+Resolve UI conflicts in favour of the Nova implementation, then apply upstream's real non-formatting fixes such as explicit `void` expressions for intentionally unawaited promises and any formatter-ignore comments required around Chisel markers. Keep the locally deleted components deleted. Once the configuration is settled, run the new fixer once and commit its class ordering and layout changes separately.
+
+Before advancing the `upstream-sync-*` tag, run the Vite+ check, the explicit TypeScript check, the SSR build, the PHP test suite and the installer feature permutations. Do not move the baseline tag merely because Git reports a syntactically successful merge.
 
 #### Where the conflicts land
 

@@ -55,7 +55,7 @@ export default function ManagePasskeys(props: Props) {
 
             <CardContent>
                 {passkeys.length > 0 ? (
-                    <ItemGroup className="gap-0 overflow-hidden rounded-lg border border-border">
+                    <ItemGroup className="border-border gap-0 overflow-hidden rounded-lg border">
                         {passkeys.map((passkey) => (
                             <PasskeyItem
                                 key={passkey.id}

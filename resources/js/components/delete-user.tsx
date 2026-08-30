@@ -42,7 +42,7 @@ export default function DeleteUser() {
                 <p>Please proceed with caution, this cannot be undone.</p>
             </CardContent>
 
-            <CardFooter className="justify-end border-destructive/20 bg-destructive/5 dark:bg-destructive/10">
+            <CardFooter className="border-destructive/20 bg-destructive/5 dark:bg-destructive/10 justify-end">
                 <AlertDialog>
                     <AlertDialogTrigger
                         render={

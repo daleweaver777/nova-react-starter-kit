@@ -46,11 +46,11 @@ export default function PasskeyItem({ passkey, onDelete }: Props) {
     return (
         <Item
             role="listitem"
-            className="rounded-none border-x-0 border-t-0 border-b border-b-border last:border-b-0"
+            className="border-b-border rounded-none border-x-0 border-t-0 border-b last:border-b-0"
         >
             <ItemMedia
                 variant="icon"
-                className="size-8 rounded-lg bg-muted text-muted-foreground"
+                className="bg-muted text-muted-foreground size-8 rounded-lg"
             >
                 <KeyRound />
             </ItemMedia>
@@ -71,7 +71,7 @@ export default function PasskeyItem({ passkey, onDelete }: Props) {
                     Added {passkey.created_at_diff}
                     {passkey.last_used_at_diff && (
                         <>
-                            <span className="mx-1 text-muted-foreground/50">
+                            <span className="text-muted-foreground/50 mx-1">
                                 /
                             </span>
                             Last used {passkey.last_used_at_diff}

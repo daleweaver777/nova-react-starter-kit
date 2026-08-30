@@ -9,7 +9,7 @@ export default function AuthSimpleLayout({
     description,
 }: AuthLayoutProps) {
     return (
-        <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
+        <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
             <div className="w-full max-w-sm">
                 <div className="flex flex-col gap-8">
                     <div className="flex flex-col items-center gap-4">
@@ -18,7 +18,7 @@ export default function AuthSimpleLayout({
                             className="flex flex-col items-center gap-2 text-sm font-medium"
                         >
                             <div className="mb-1 flex size-9 items-center justify-center rounded-lg">
-                                <AppLogoIcon className="size-9 fill-current text-foreground" />
+                                <AppLogoIcon className="text-foreground size-9 fill-current" />
                             </div>
                             <span className="sr-only">{title}</span>
                         </Link>
@@ -27,7 +27,7 @@ export default function AuthSimpleLayout({
                             <h1 className="font-heading text-lg font-semibold">
                                 {title}
                             </h1>
-                            <p className="text-sm text-balance text-muted-foreground">
+                            <p className="text-muted-foreground text-sm text-balance">
                                 {description}
                             </p>
                         </div>

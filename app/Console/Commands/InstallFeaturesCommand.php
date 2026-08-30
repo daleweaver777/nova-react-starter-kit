@@ -206,9 +206,8 @@ class InstallFeaturesCommand extends Command
      * foreign *lock file* but leaves `node_modules` alone, and pnpm/yarn/bun
      * install straight *over* npm's flat tree and exit 0.
      *
-     * Measured against `--pnpm`, that hybrid tree is ugly but harmless: 492 root
-     * entries against a clean 35, yet `types:check`, `lint:check` and
-     * `format:check` all pass, because `@inertiajs/react` resolves
+     * Measured against `--pnpm`, that hybrid tree is noisy but harmless: both
+     * `check` and `types:check` pass because `@inertiajs/react` resolves
      * `@inertiajs/core` through `.pnpm` and never reads the stale copy at the
      * root. It is removed anyway so all four managers behave identically -- the
      * same overlay is untested for `--yarn` and `--bun` -- and to avoid leaving

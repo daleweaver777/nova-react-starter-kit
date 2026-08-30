@@ -28,6 +28,7 @@ import {
 import { focusFirstFormError } from '@/lib/utils';
 import { edit } from '@/routes/security';
 
+// oxfmt-ignore
 type Props = {
     passwordRules: string;
 } /* @chisel-passkeys */ & ManagePasskeysProps /* @end-chisel-passkeys */ /* @chisel-2fa */ &

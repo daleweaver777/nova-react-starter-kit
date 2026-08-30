@@ -112,7 +112,7 @@ export default function TwoFactorRecoveryCodes({
                             <>
                                 <ul
                                     ref={codesSectionRef}
-                                    className="grid gap-1 rounded-lg bg-muted p-3 font-mono text-sm"
+                                    className="bg-muted grid gap-1 rounded-lg p-3 font-mono text-sm"
                                     aria-label="Recovery codes"
                                 >
                                     {recoveryCodesList.length ? (
@@ -129,7 +129,7 @@ export default function TwoFactorRecoveryCodes({
                                                 (_, index) => (
                                                     <Skeleton
                                                         key={index}
-                                                        className="h-4 bg-muted-foreground/20"
+                                                        className="bg-muted-foreground/20 h-4"
                                                         aria-hidden="true"
                                                     />
                                                 ),
@@ -140,7 +140,7 @@ export default function TwoFactorRecoveryCodes({
 
                                 <p
                                     id="regenerate-warning"
-                                    className="text-sm text-muted-foreground select-none"
+                                    className="text-muted-foreground text-sm select-none"
                                 >
                                     Each recovery code can be used once to
                                     access your account and will be removed

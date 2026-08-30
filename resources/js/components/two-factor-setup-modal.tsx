@@ -44,13 +44,13 @@ import { confirm } from '@/routes/two-factor';
 
 function GridScanIcon() {
     return (
-        <div className="mb-3 rounded-full border border-border bg-card p-0.5 shadow-sm">
-            <div className="relative overflow-hidden rounded-full border border-border bg-muted p-2.5">
+        <div className="border-border bg-card mb-3 rounded-full border p-0.5 shadow-sm">
+            <div className="border-border bg-muted relative overflow-hidden rounded-full border p-2.5">
                 <div className="absolute inset-0 grid grid-cols-5 opacity-50">
                     {Array.from({ length: 5 }, (_, i) => (
                         <div
                             key={`col-${i + 1}`}
-                            className="border-r border-border last:border-r-0"
+                            className="border-border border-r last:border-r-0"
                         />
                     ))}
                 </div>
@@ -58,11 +58,11 @@ function GridScanIcon() {
                     {Array.from({ length: 5 }, (_, i) => (
                         <div
                             key={`row-${i + 1}`}
-                            className="border-b border-border last:border-b-0"
+                            className="border-border border-b last:border-b-0"
                         />
                     ))}
                 </div>
-                <ScanLine className="relative z-20 size-6 text-foreground" />
+                <ScanLine className="text-foreground relative z-20 size-6" />
             </div>
         </div>
     );
@@ -92,7 +92,7 @@ function TwoFactorSetupStep({
             ) : (
                 <>
                     <div className="mx-auto flex max-w-md overflow-hidden">
-                        <div className="mx-auto aspect-square w-64 rounded-xl border border-border">
+                        <div className="border-border mx-auto aspect-square w-64 rounded-xl border">
                             <div className="z-10 flex size-full items-center justify-center p-5">
                                 {qrCodeSvg ? (
                                     <div
@@ -120,7 +120,7 @@ function TwoFactorSetupStep({
                         </Button>
                     </div>
 
-                    <FieldSeparator className="w-full *:data-[slot=field-separator-content]:bg-popover">
+                    <FieldSeparator className="*:data-[slot=field-separator-content]:bg-popover w-full">
                         Or enter the code manually
                     </FieldSeparator>
 
@@ -363,7 +363,7 @@ export default function TwoFactorSetupModal({
 
     useEffect(() => {
         if (isOpen && !qrCodeSvg) {
-            fetchSetupDataRef.current();
+            void fetchSetupDataRef.current();
         }
     }, [isOpen, qrCodeSvg]);
 

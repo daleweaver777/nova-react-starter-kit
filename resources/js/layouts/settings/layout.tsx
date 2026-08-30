@@ -55,7 +55,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                         buttonVariants({ variant: 'ghost' }),
                                         'relative flex-1 justify-center lg:w-full lg:flex-none lg:justify-start',
                                         isActive && [
-                                            'after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-foreground',
+                                            'after:bg-foreground after:absolute after:inset-x-0 after:-bottom-px after:h-0.5',
                                             'lg:bg-muted lg:after:hidden',
                                         ],
                                     )}

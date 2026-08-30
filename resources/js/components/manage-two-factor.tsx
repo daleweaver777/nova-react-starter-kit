@@ -74,7 +74,7 @@ export default function ManageTwoFactor(props: Props) {
                 </CardHeader>
 
                 <CardContent>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                         {twoFactorEnabled
                             ? 'You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.'
                             : 'When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.'}
