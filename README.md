@@ -81,9 +81,12 @@ A sync then runs:
 ```sh
 git remote add upstream https://github.com/laravel/react-starter-kit.git
 git fetch upstream
-git diff upstream-sync-2026-08-30..upstream/main   # only what upstream added since
+baseline=$(git describe --tags --match 'upstream-sync-*' --abbrev=0)
+git diff "$baseline"..upstream/main   # only what upstream added since
 git merge upstream/main
 ```
+
+`git describe` selects the newest sync tag reachable from the fork, so this example stays current after the baseline moves forward.
 
 After a successful merge, move the baseline forward and push it, or the next sync re-reviews work already resolved:
 
@@ -99,10 +102,11 @@ A normal clone from this repository includes the pushed `upstream-sync-*` tags, 
 ```sh
 git remote add upstream https://github.com/laravel/react-starter-kit.git
 git fetch upstream
-git diff upstream-sync-2026-08-30..upstream/main
+baseline=$(git describe --tags --match 'upstream-sync-*' --abbrev=0)
+git diff "$baseline"..upstream/main
 ```
 
-Use the newest `upstream-sync-*` tag as the left side of the comparison. Before deleting an old clone, make sure both `main` and the newest sync tag have been pushed to `origin`; untracked files, ignored files, local branches, `.git/info/exclude` and remote configuration do not survive a fresh clone.
+Before deleting an old clone, make sure both `main` and the newest sync tag have been pushed to `origin`; untracked files, ignored files, local branches, `.git/info/exclude` and remote configuration do not survive a fresh clone.
 
 Upstream ships a "Sync Laravel skeleton changes" commit every week or two, so expect to do this regularly rather than in one large catch-up.
 
